@@ -6,8 +6,8 @@
 
 class TrieNodeTest : public Testable{
 public:
-	void static testGetChild();
-
+	void static testGetData1();
+	void static testGetData2();
 	void static testCountChild();
 
 	cute::suite testSuite();

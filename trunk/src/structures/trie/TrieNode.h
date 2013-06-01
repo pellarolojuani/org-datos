@@ -1,5 +1,5 @@
-#ifndef TRIELEAF_H_
-#define TRIELEAF_H_
+#ifndef TRIENODE_H_
+#define TRIENODE_H_
 
 #include <list>
 #include <string>
@@ -22,17 +22,19 @@ public:
 	void setData(std::string key, TrieNodeData data);
 	TrieNodeData getData(std::string key);
 	int countChild();
+	void printTrie();
+	std::list<TrieNode*> childList;
+	TrieNodeData nodeData;
 private:
 	//Función recursiva que recorre las hojas del trie
 	void addChildRec(std::string substring, TrieNodeData data);
+	TrieNodeData getDataRec(std::string substring);
 	int size;
 	char tag;
-	std::list<TrieNode*> childList;
 	/**
 	 * (si, es ineficiente, puedo hacer cosas con casteo y usar un único puntero,
 	 * pero es sencillísimo)
 	 */
-	TrieNodeData nodeData;
 };
 
-#endif /* TRIELEAF_H_ */
+#endif /* TRIENODE_H_ */
