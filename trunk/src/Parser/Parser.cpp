@@ -11,11 +11,12 @@ namespace parser {
 
 Parser::Parser() {
 	this->delimitadores = DELIMITADORES;
+	pos = 0;
 
 }
 
 //Funcion que parsea una linea de entrada devolviendo un vector de strings.
-string*  Parser::parsearLinea(string str){
+string*  Parser::parsearLinea(string str, int* posiciones){
 
 	//esta linea es cualquiera, pero después veremos qué va pasando
 	//con las palabras que se agreguen al parser, o sea, capaz que hay
@@ -31,6 +32,7 @@ string*  Parser::parsearLinea(string str){
 
 	while ( i < str.length() ){
 		char caracter = str.at(i);
+		pos++;
 		if (this->esDelimitador(caracter,&delimitadores)){
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
 			cout<<palabra<<endl;
@@ -38,6 +40,7 @@ string*  Parser::parsearLinea(string str){
 			indiceComienzoPalabra=i;
 			//Se encontró una palabra.
 			arrayPalabras[indicePalabra] = palabra;
+			posiciones[indicePalabra]=pos;
 			indicePalabra++;
 
 			bool esCaracterFinal = false;
@@ -83,6 +86,13 @@ bool Parser::esDelimitador(char c, string* delimitadores){
 
 }
 
+int Parser::getUltimaPosicion(){
+	return this->pos;
+}
+
+void Parser::resetUltimaPosicion(){
+	this->pos=0;
+}
 
 Parser::~Parser() {
 	// TODO Auto-generated destructor stub

@@ -13,6 +13,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 
 namespace parser {
@@ -20,13 +21,15 @@ namespace parser {
 class Parser {
 public:
 	Parser();
-	string* parsearLinea(string);
+	string* parsearLinea(string, int* posiciones);
+	int getUltimaPosicion();
+	void resetUltimaPosicion();
 	virtual ~Parser();
 
 private:
 	string delimitadores;
 	bool esDelimitador(char c, string* delimitadores);
-
+	int pos;
 };
 
 } /* namespace parser */
