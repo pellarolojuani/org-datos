@@ -16,13 +16,15 @@ Parser::Parser() {
 }
 
 //Funcion que parsea una linea de entrada devolviendo un vector de strings.
-string*  Parser::parsearLinea(string str, int* posiciones){
+//Recibe como parámetro un elemento posiciones, donde se va a guardar la posicion
+//relativa de cada string (se mapean uno a uno)
+string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 
 	//esta linea es cualquiera, pero después veremos qué va pasando
 	//con las palabras que se agreguen al parser, o sea, capaz que hay
 	//que meter la palabra parseada en un nodo de arbol B, o un arbol binario
 	//o algo así.
-	string* arrayPalabras=new string[50];
+	string* arrayPalabras=new string[MAX_POSICIONES_LINEA];
 
 	//Proceso caracter a caracter y voy formando palabras.
 	string palabra = "";
@@ -30,17 +32,20 @@ string*  Parser::parsearLinea(string str, int* posiciones){
 	unsigned int indiceComienzoPalabra = 0;
 	unsigned int indicePalabra = 0;
 
+	int* posiciones = posicionesFinales->getPosiciones();
+
 	while ( i < str.length() ){
 		char caracter = str.at(i);
-		pos++;
+
 		if (this->esDelimitador(caracter,&delimitadores)){
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
-			cout<<palabra<<endl;
+			//cout<<palabra<<endl;
 			i++;
+			posiciones[indicePalabra]=pos-(i-indiceComienzoPalabra-1);
+			posicionesFinales->setCantPosiciones(posicionesFinales->getCantPosiciones()+1);
 			indiceComienzoPalabra=i;
 			//Se encontró una palabra.
 			arrayPalabras[indicePalabra] = palabra;
-			posiciones[indicePalabra]=pos;
 			indicePalabra++;
 
 			bool esCaracterFinal = false;
@@ -62,13 +67,17 @@ string*  Parser::parsearLinea(string str, int* posiciones){
 		} else if (i == str.length()-1) {
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)+1);
 			arrayPalabras[indicePalabra] = palabra;
-			cout<<palabra<<endl;
+
+			posiciones[indicePalabra]=pos;
+			posicionesFinales->setCantPosiciones(posicionesFinales->getCantPosiciones()+1);
+
 			indicePalabra++;
 			i++;
 		}
 
 		else
 			i++;
+		pos++;
 
 	}
 
