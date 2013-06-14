@@ -32,20 +32,22 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 	unsigned int indiceComienzoPalabra = 0;
 	unsigned int indicePalabra = 0;
 
-	int* posiciones = posicionesFinales->getPosiciones();
 
 	while ( i < str.length() ){
 		char caracter = str.at(i);
 
 		if (this->esDelimitador(caracter,&delimitadores)){
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
-			//cout<<palabra<<endl;
 			i++;
-			posiciones[indicePalabra]=pos-(i-indiceComienzoPalabra-1);
-			posicionesFinales->setCantPosiciones(posicionesFinales->getCantPosiciones()+1);
+
+
+			posicionesFinales->agregarPosicion(pos-(i-indiceComienzoPalabra-1));
+
+
 			indiceComienzoPalabra=i;
 			//Se encontró una palabra.
-			arrayPalabras[indicePalabra] = palabra;
+
+			arrayPalabras[indicePalabra] = tolowercase(palabra);
 			indicePalabra++;
 
 			bool esCaracterFinal = false;
@@ -66,10 +68,11 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 
 		} else if (i == str.length()-1) {
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)+1);
-			arrayPalabras[indicePalabra] = palabra;
 
-			posiciones[indicePalabra]=pos;
-			posicionesFinales->setCantPosiciones(posicionesFinales->getCantPosiciones()+1);
+			arrayPalabras[indicePalabra] = tolowercase(palabra);
+
+			posicionesFinales->agregarPosicion(pos);
+
 
 			indicePalabra++;
 			i++;
@@ -101,6 +104,14 @@ int Parser::getUltimaPosicion(){
 
 void Parser::resetUltimaPosicion(){
 	this->pos=0;
+}
+
+string Parser::tolowercase(string s){
+	for (int i=0;i<strlen(s.c_str());i++){
+		if (s[i] >= 0x41 && s[i] <= 0x5A)
+			s[i] = s[i] + 0x20;
+	}
+	return s;
 }
 
 Parser::~Parser() {
