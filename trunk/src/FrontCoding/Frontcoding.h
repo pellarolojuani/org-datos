@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include <sstream>
 
 #ifndef FRONTCODING_H_
 #define FRONTCODING_H_
