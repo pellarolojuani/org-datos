@@ -7,9 +7,9 @@
 
 #ifndef POSICIONES_H_
 #define POSICIONES_H_
-#ifndef MAX_POSICIONES_LINEA
-#define MAX_POSICIONES_LINEA 50
-#endif /* MAX_POSICIONES_LINEA */
+#ifndef MAX_POSICIONES
+#define MAX_POSICIONES 2
+#endif /* MAX_POSICIONES */
 
 namespace parser {
 
@@ -20,10 +20,12 @@ public:
 	int getCantPosiciones();
 	void setCantPosiciones(int cant);
 	void resetCantidadPosiciones();
+	void agregarPosicion(int posicion);
 	virtual ~Posiciones();
 private:
-	int posiciones[MAX_POSICIONES_LINEA];
+	int* posiciones;
 	int cantPosiciones;
+	int tamanio;
 };
 
 } /* namespace parser */
