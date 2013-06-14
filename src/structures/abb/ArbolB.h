@@ -20,10 +20,13 @@ Axiomas: 1 - Todas sus hojas estan en el mismo nivel.
 #define NULL 0
 #endif //NULL
 
+
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include "../../FrontCoding/Frontcoding.h"
 using namespace std;
+
 namespace abb {
 enum codigosDeError
 {
@@ -117,9 +120,9 @@ class ArbolB{
 
 
     //FUNCION TOTALMENTE DESUBICADA ACA
-    void guardarLexico(FILE* archLexico){
+    void guardarLexico(frontcoding::Frontcoding FC){
     	int offset=0;
-    	guardarLexicoRe(this->raiz, archLexico, offset);
+    	guardarLexicoRe(this->raiz, "", offset, FC);
 
 
     }
@@ -143,18 +146,31 @@ class ArbolB{
             }
         }
 
-        void guardarLexicoRe(B_nodo<T,orden>* actual, FILE* arch, int offset)
+        void guardarLexicoRe(B_nodo<T,orden>* actual, string palabraAnt,
+        									 int offset, frontcoding::Frontcoding FC)
 		{
 			int i;
 			if (actual){
+				string palabrastr = (actual->data[i].getPalabra());
+				const char* palabra = palabrastr.c_str();
 				for (i=0; i<actual->entradasOcupadas; i++)
 				{
-					guardarLexicoRe(actual->ramas[i],arch,offset);
-					char* palabra = actual->data[i].getPalabra();
-					fputs(palabra, arch);
+
+					guardarLexicoRe(actual->ramas[i],palabra,offset, FC);
+
+					if(palabraAnt!=""){
+						//Comparo con la palabra anterior cuántos caracteres son distintos
+						int numCharDistintos;
+						string substr = FC.compararPorCharDistintos(palabraAnt,palabra,&numCharDistintos);
+						FC.guardarEnArchivo(substr, numCharDistintos, offset);
+
+					}
+
 					offset+=(strlen(palabra)+offset);
+
+
 				}
-				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], arch, offset);
+				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], palabra, offset, FC);
 			}
 		}
 
@@ -389,14 +405,6 @@ class ArbolB{
 
 		bool buscarEnNodoParaDevolver(B_nodo<T,orden>* actual, T& target, int &posicion, T** devuelto)
 		{
-			/*
-			pre: actual apunta a un B_nodo.
-			post: Si la clave de target es encontrada en el nodo actual, la funcion
-			devuelve true y el parametro de posicion se seatea de forma que concuerde con
-			la posicion en la que esta el target. Si no, se devuelve false y la posicion
-			es seteada de forma que coincida con la rama por la que hay que continuar la
-			busqueda.
-			*/
 			posicion = 0;
 
 			//Aumenta posicion hasta que target sea menor que la siguiente entrada.
