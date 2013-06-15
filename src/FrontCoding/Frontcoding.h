@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <sstream>
+#include <stdlib.h>
 
 #ifndef FRONTCODING_H_
 #define FRONTCODING_H_
@@ -29,8 +30,6 @@ public:
 private:
 	FILE* archIntlexico;
 	FILE* archIntTabla;
-	FILE* archIntLexicoTemp;
-	FILE* archIntTablaTemp;
 	string palabraAnterior;
 	int offset;
 

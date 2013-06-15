@@ -15,19 +15,22 @@ Frontcoding::Frontcoding(FILE* rutaArchivoLexico, FILE* rutaArchivoTabla ) {
 	this->archIntTabla = rutaArchivoLexico;
 	this->archIntlexico = rutaArchivoTabla;
 	palabraAnterior = ".";
-	int offset = 0;
+	offset = 0;
 
 }
 
 void Frontcoding::agregarPalabra(string str){
 	if (str.compare(".") == 0){
 		this->guardarEnArchivo(str, 0, 0);
+		this->palabraAnterior = str;
 	} else {
+
 		int cant;
-		string substr = compararPorCharDistintos(str,palabraAnterior,&cant);
+		string substr = compararPorCharDistintos(palabraAnterior,str,&cant);
 		this->guardarEnArchivo(substr, cant, offset);
 		offset+=substr.length();
-		palabraAnterior = str;
+		this->palabraAnterior = str;
+
 	}
 }
 
@@ -36,23 +39,22 @@ void Frontcoding::agregarPalabra(string str){
 string Frontcoding::compararPorCharDistintos(string uno, string dos, int* cantidad){
 
 	int i = 0;
-	while (uno[i] == dos[i]){
+	while ((uno[i] == dos[i])&&(i<uno.length()) && (i<dos.length())){
 		i++;
 	}
 	string s = dos;
 	int numDistintos = strlen(dos.c_str()) - i;
-	if(numDistintos <= 0){
-		*cantidad = 0;
-	} else {
-		*cantidad = numDistintos;
-		s = dos.substr(i, strlen(dos.c_str()) );
-	}
+
+	*cantidad = numDistintos;
+	s = dos.substr(i, strlen(dos.c_str()) );
+
 
 	return s;
 }
 
 int Frontcoding::guardarEnArchivo(string str, int charsDistintos, int offset){
 	fputs(str.c_str(), this->archIntlexico);
+	cout<<"estoo:"<<str<<endl;
 	fputc((char)charsDistintos, this->archIntTabla);
 	fputs(" ", this->archIntTabla);
 
