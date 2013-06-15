@@ -12,8 +12,8 @@ namespace frontcoding {
 //creo el archivo de FC final y la tabla final.
 Frontcoding::Frontcoding(FILE* rutaArchivoLexico, FILE* rutaArchivoTabla ) {
 
-	this->archIntTabla = rutaArchivoLexico;
-	this->archIntlexico = rutaArchivoTabla;
+	this->archIntTabla = rutaArchivoTabla;
+	this->archIntlexico = rutaArchivoLexico;
 	palabraAnterior = ".";
 	offset = 0;
 
@@ -47,15 +47,17 @@ string Frontcoding::compararPorCharDistintos(string uno, string dos, int* cantid
 
 	*cantidad = numDistintos;
 	s = dos.substr(i, strlen(dos.c_str()) );
-
-
 	return s;
 }
 
 int Frontcoding::guardarEnArchivo(string str, int charsDistintos, int offset){
 	fputs(str.c_str(), this->archIntlexico);
-	cout<<"estoo:"<<str<<endl;
-	fputc((char)charsDistintos, this->archIntTabla);
+
+	stringstream s1;
+	s1 << charsDistintos;
+	string strDist = s1.str();
+
+	fputs(strDist.c_str(), this->archIntTabla);
 	fputs(" ", this->archIntTabla);
 
 	stringstream ss;
