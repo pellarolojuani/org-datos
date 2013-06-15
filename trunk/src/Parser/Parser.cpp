@@ -32,11 +32,11 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 	unsigned int indiceComienzoPalabra = 0;
 	unsigned int indicePalabra = 0;
 
-
 	while ( i < str.length() ){
 		char caracter = str.at(i);
 
-		if (this->esDelimitador(caracter,&delimitadores)){
+		if ((this->esDelimitador(caracter,&delimitadores)) && (i != 0)){
+
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
 			i++;
 
@@ -66,7 +66,18 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 					esCaracterFinal = true;
 			}
 
-		} else if (i == str.length()-1) {
+		} else if (this->esDelimitador(caracter,&delimitadores)&& (i == 0)){
+			while((this->esDelimitador(caracter,&delimitadores))){
+				i++;
+				indiceComienzoPalabra=i;
+				if(i < str.length()){
+					caracter=str.at(i);
+				} else
+					break;
+			}
+		}
+
+		else if (i == str.length()-1) {
 			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)+1);
 
 			arrayPalabras[indicePalabra] = tolowercase(palabra);
@@ -83,6 +94,7 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 		pos++;
 
 	}
+
 
 	return arrayPalabras;
 
