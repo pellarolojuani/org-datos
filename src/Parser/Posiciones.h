@@ -8,7 +8,7 @@
 #ifndef POSICIONES_H_
 #define POSICIONES_H_
 #ifndef MAX_POSICIONES
-#define MAX_POSICIONES 2
+#define MAX_POSICIONES 10
 #endif /* MAX_POSICIONES */
 
 namespace parser {

@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <time.h>
+#include <string>
 
 static const string CURR_DIR_STR = ".";
 static const string PARENT_DIR_STR = "..";

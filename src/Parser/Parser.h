@@ -7,7 +7,7 @@
 
 
 #ifndef DELIMITADORES
-#define DELIMITADORES ",.;: ¡!¿?\"\n<>()-_”[]'\n"
+#define DELIMITADORES ",.;: ¡!¿?\"<>(){}-_”[]'\n\t\b"
 #endif /*DELIMITADORES*/
 
 #ifndef MAX_POSICIONES_LINEA
@@ -39,6 +39,7 @@ private:
 	void agregarPalabra(string palabra, string* palabras, int cantPalabras);
 	string tolowercase(string s);
 	int pos;
+	string quitarFinDeLinea(string s);
 };
 
 } /* namespace parser */
