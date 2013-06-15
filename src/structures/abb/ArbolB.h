@@ -121,8 +121,7 @@ class ArbolB{
 
     //FUNCION TOTALMENTE DESUBICADA ACA
     void guardarLexico(frontcoding::Frontcoding FC){
-    	int offset=0;
-    	guardarLexicoRe(this->raiz, "", offset, FC);
+    	guardarLexicoRe(this->raiz, FC);
 
 
     }
@@ -138,7 +137,7 @@ class ArbolB{
                 for (i=0; i<actual->entradasOcupadas; i++)
                 {
                     emitirRecursivo(actual->ramas[i]);
-                    cout << actual->data[i].getPalabra();
+                    cout << actual->data[i].getPalabra()<<"i"<<i;
                     cout << "   "<<actual->data[i].getFrecuencia();
                     std::cout << std::endl;
                 }
@@ -146,31 +145,24 @@ class ArbolB{
             }
         }
 
-        void guardarLexicoRe(B_nodo<T,orden>* actual, string palabraAnt,
-        									 int offset, frontcoding::Frontcoding FC)
+        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding FC)
 		{
 			int i;
 			if (actual){
-				string palabrastr = (actual->data[i].getPalabra());
-				const char* palabra = palabrastr.c_str();
+
 				for (i=0; i<actual->entradasOcupadas; i++)
 				{
+					string palabrastr = (string) (actual->data[i].getPalabra());
 
-					guardarLexicoRe(actual->ramas[i],palabra,offset, FC);
 
-					if(palabraAnt!=""){
-						//Comparo con la palabra anterior cuántos caracteres son distintos
-						int numCharDistintos;
-						string substr = FC.compararPorCharDistintos(palabraAnt,palabra,&numCharDistintos);
-						FC.guardarEnArchivo(substr, numCharDistintos, offset);
+					guardarLexicoRe(actual->ramas[i], FC);
 
-					}
 
-					offset+=(strlen(palabra)+offset);
+					FC.agregarPalabra(palabrastr);
 
 
 				}
-				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], palabra, offset, FC);
+				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC);
 			}
 		}
 
