@@ -154,13 +154,8 @@ class ArbolB{
 				for (i=0; i<actual->entradasOcupadas; i++)
 				{
 					string palabrastr = (string) (actual->data[i].getPalabra());
-
-
 					guardarLexicoRe(actual->ramas[i], FC);
-
-
 					FC.agregarPalabra(palabrastr);
-
 
 				}
 				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC);
