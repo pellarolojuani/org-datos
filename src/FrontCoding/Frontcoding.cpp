@@ -7,9 +7,6 @@
 
 #include "Frontcoding.h"
 
-
-
-
 namespace frontcoding {
 //Recibo 2 archivos intermedios: uno con todo el léxico junto y otro con la tabla de los offset y
 //creo el archivo de FC final y la tabla final.
@@ -17,7 +14,21 @@ Frontcoding::Frontcoding(FILE* rutaArchivoLexico, FILE* rutaArchivoTabla ) {
 
 	this->archIntTabla = rutaArchivoLexico;
 	this->archIntlexico = rutaArchivoTabla;
+	palabraAnterior = ".";
+	int offset = 0;
 
+}
+
+void Frontcoding::agregarPalabra(string str){
+	if (str.compare(".") == 0){
+		this->guardarEnArchivo(str, 0, 0);
+	} else {
+		int cant;
+		string substr = compararPorCharDistintos(str,palabraAnterior,&cant);
+		this->guardarEnArchivo(substr, cant, offset);
+		offset+=substr.length();
+		palabraAnterior = str;
+	}
 }
 
 //Esta función te devuelve cuántos caracteres distintos tiene el str uno con respecto al dos pero contando desde
@@ -53,9 +64,6 @@ int Frontcoding::guardarEnArchivo(string str, int charsDistintos, int offset){
 	fputs("\n", this->archIntTabla);
 }
 
-void Frontcoding::almacenarLexico(){
-
-}
 
 Frontcoding::~Frontcoding() {
 	// TODO Auto-generated destructor stub

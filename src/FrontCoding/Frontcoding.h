@@ -22,11 +22,17 @@ public:
 	string compararPorCharDistintos(string uno, string dos, int* cantidad);
 	int guardarEnArchivo(string str, int charsDistintos, int offset);
 
+	void agregarPalabra(string palabra);
+
 	void almacenarLexico();
 	virtual ~Frontcoding();
 private:
 	FILE* archIntlexico;
 	FILE* archIntTabla;
+	FILE* archIntLexicoTemp;
+	FILE* archIntTablaTemp;
+	string palabraAnterior;
+	int offset;
 
 };
 
