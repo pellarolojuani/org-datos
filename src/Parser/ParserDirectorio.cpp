@@ -120,7 +120,7 @@ void ParserDirectorio::parseFile(FILE* dirAct){
 			if (esta) {
 				nodotar = arbolito->buscarYdevolver(nodotar);
 				nodotar.setFrecuencia(nodotar.getFrecuencia()+1);
-				//nodotar.getPosiciones().agregarPosicion(posis.getPosiciones()[i]);
+				nodotar.getPosiciones().agregarPosicion(posis.getPosiciones()[i]);
 				this->arbolito->modify(nodotar);
 
 			} else {
