@@ -7,7 +7,7 @@
 
 
 #ifndef DELIMITADORES
-#define DELIMITADORES ",.;: ¡!¿?\"\n<>()-_”[]"
+#define DELIMITADORES ",.;: ¡!¿?\"\n<>()-_”[]'\n"
 #endif /*DELIMITADORES*/
 
 #ifndef MAX_POSICIONES_LINEA

@@ -91,6 +91,8 @@ int ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 		}
 		closedir(dir);
 	}
+	arbolito->emitir();
+
 	this->almacenarLexico();
 
 }
