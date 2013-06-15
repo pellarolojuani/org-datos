@@ -137,9 +137,10 @@ class ArbolB{
                 for (i=0; i<actual->entradasOcupadas; i++)
                 {
                     emitirRecursivo(actual->ramas[i]);
-                    cout << actual->data[i].getPalabra()<<"i"<<i;
-                    cout << "   "<<actual->data[i].getFrecuencia();
-                    std::cout << std::endl;
+                    cout << "PLABRA    " << actual->data[i].getPalabra() <<"  FIN";
+                    //cout << actual->data[i].getFrecuencia();
+                    cout << endl;
+
                 }
                 emitirRecursivo(actual->ramas[actual->entradasOcupadas]);
             }
