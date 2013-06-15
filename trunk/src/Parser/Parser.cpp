@@ -35,9 +35,13 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 	while ( i < str.length() ){
 		char caracter = str.at(i);
 
-		if ((this->esDelimitador(caracter,&delimitadores)) && (i != 0)){
+		if ((this->esDelimitador(caracter,&delimitadores))&&(i!=0)){
 
-			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
+			string palabra;
+			if(i == str.length()-1){
+				palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)-1);
+			} else
+				palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
 			i++;
 
 
@@ -66,20 +70,21 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 					esCaracterFinal = true;
 			}
 
-		} else if (this->esDelimitador(caracter,&delimitadores)&& (i == 0)){
-			while((this->esDelimitador(caracter,&delimitadores))){
+		} else if ((this->esDelimitador(caracter,&delimitadores))&&(i == 0)){
+			bool esCaracterFinal = false;
+			while((this->esDelimitador(caracter,&delimitadores)&&!esCaracterFinal)){
 				i++;
 				indiceComienzoPalabra=i;
 				if(i < str.length()){
 					caracter=str.at(i);
 				} else
-					break;
+					esCaracterFinal = true;
 			}
 		}
 
 		else if (i == str.length()-1) {
-			string palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)+1);
-
+			string palabra = str.substr(indiceComienzoPalabra);
+			palabra=quitarFinDeLinea(palabra);
 			arrayPalabras[indicePalabra] = tolowercase(palabra);
 
 			posicionesFinales->agregarPosicion(pos);
@@ -101,12 +106,30 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 }
 
 bool Parser::esDelimitador(char c, string* delimitadores){
-	for(unsigned int i = 0; i < delimitadores->length(); i++){
-		if (delimitadores->at(i) == c){
-			return true;
+	//Determino si es una letra mediante codigo ascii.
+
+	if( ( ( c >= 97 ) && ( c <= 122 ) ) || ( c == 47 ) ||( ( c >= 65 ) && ( c <= 90 ) ) ||( c == 195 ) ||
+			( c == 161 ) || ( c == 129 )|| ( c == 169 ) ||
+			( c == 137 ) || ( c == 173 )|| ( c == 141 ) ||
+			( c == 179 ) || ( c == 147 )|| ( c == 186 ) ||( c == 154 ) || ( c == 177 )|| ( c == 145 ) ){
+
+			return false ;
+
+		}else{
+
+			if( ( c >= 47 ) && ( c <= 57 ) ){
+				//es un numero
+				return false ;
+			}
 		}
-	}
-	return false;
+
+		return true ;
+//	for(unsigned int i = 0; i < delimitadores->length(); i++){
+//		if (delimitadores->at(i) == c){
+//			return true;
+//		}
+//	}
+//	return false;
 
 }
 
@@ -116,6 +139,12 @@ int Parser::getUltimaPosicion(){
 
 void Parser::resetUltimaPosicion(){
 	this->pos=0;
+}
+
+string Parser::quitarFinDeLinea(string s){
+	if (s[strlen(s.c_str())-1] == '\n')
+		s = s.substr(0,strlen(s.c_str()));
+	return s;
 }
 
 string Parser::tolowercase(string s){
