@@ -25,12 +25,12 @@ abb::Nodo setNodo(int);
 
 int main() {
 
-	char* textos = "/home/lucia/miau";
+	char* textos = "/home/lucia/nuevas";
 //	testParsearLinea();
 	parser::ParserDirectorio pars(textos);
 	pars.parsearDirectorio();
 
-//
+
 //	buscador::Buscador *busq = new buscador::Buscador();
 
 //	testNodo();
@@ -62,7 +62,7 @@ abb::Nodo setNodo(int j){
 	nodo.setFrecuencia(45);
 	nodo.setPalabra(test[j]);
 	nodo.setOffsetPosiciones(4);
-	nodo.setPosiciones(poss);
+	nodo.setPosiciones(&poss);
 
 	return nodo;
 
@@ -83,29 +83,52 @@ void testAbb(){
 	arbolito.insertar(nodo4);
 	arbolito.insertar(nodo5);
 
+
+	abb::Nodo nodoAReemplazar;
+	nodoAReemplazar.setFrecuencia(1);
+	nodoAReemplazar.setPalabra("uno");
+
 	abb::Nodo nodoBusq = setNodo(1);
-	nodoBusq.setPalabra("za");
-//	nodoBusq.setFrecuencia(232323);
-//
-//	bool modif = arbolito.modify(nodoBusq);
-//
-//	abb::Nodo nodoVacio;
-//	nodoVacio=arbolito.buscarYdevolver(nodoBusq);
-//
-//	cout<<nodoVacio.getPalabra()<<endl;
-//
-//
+	nodoBusq.setPalabra("uno");
 	nodoBusq.setFrecuencia(4);
 
-	nodoBusq = arbolito.buscarYdevolver(nodoBusq);
-	cout<<nodoBusq.getFrecuencia()<<endl;
+	abb::Nodo nodoRespuesta;
+
+
+//	Posiciones posNodoAReempl;
+//	posNodoAReempl.agregarPosicion(67);
+//	posNodoAReempl.agregarPosicion(6);
+//	posNodoAReempl.agregarPosicion(7);
+//	nodoAReemplazar.setPosiciones(posNodoAReempl);
+//
+//	Posiciones posNodoBusq;
+//	posNodoBusq.agregarPosicion(1);
+//	posNodoBusq.agregarPosicion(2);
+//	posNodoBusq.agregarPosicion(3);
+//	nodoBusq.setPosiciones(posNodoBusq);
+//
+//	cout<<"Posiciones: ";
+//	for (int i = 0; i<nodoAReemplazar.getPosiciones().getCantPosiciones(); i++) {
+//		cout<<nodoAReemplazar.getPosiciones().getPosiciones()[i]<<" , ";
+//	}
+//
+//	arbolito.insertar(nodoAReemplazar);
+//	arbolito.modify(nodoBusq);
+//
+//	nodoRespuesta = arbolito.buscarYdevolver(nodoBusq);
+//
+//	nodoBusq = arbolito.buscarYdevolver(nodo3);
+//	cout<<nodo3.getFrecuencia()<<endl;
+//
+//	cout<<"Posiciones: ";
+//	for (int i = 0; i<nodoRespuesta.getPosiciones().getCantPosiciones(); i++) {
+//		cout<<nodoRespuesta.getPosiciones().getPosiciones()[i]<<" , ";
+//	}
+//	cout<<endl;
 
 
 
 
-
-
-	cout<<"Anda por favor arbolito querido"<<endl;
 	arbolito.emitir();
 
 
@@ -119,8 +142,8 @@ void testNodo(){
 	parser::Parser pars;
 	int posiciones[20];
 	int i;
-	parser::Posiciones poss;
-	string* test = pars.parsearLinea(str, &poss);
+	parser::Posiciones* poss = new Posiciones();
+	string* test = pars.parsearLinea(str, poss);
 
 	nodo.setFrecuencia(1);
 	nodo.setPalabra(test[1]);
@@ -160,7 +183,7 @@ void testNodo(){
 
 void testParsearLinea(){
 	//Pruebas parser
-	string str = "12,1";
+	string str = "12,1 tres cuatro cinco seis   ;y sigo probando porque soy re jevi re jodida";
 	parser::Parser pars;
 	int i;
 

@@ -19,6 +19,7 @@ public:
 	static const char* archivoPunteros;
 	static const char* archivoLexico;
 	static const char* archivoTablaLexico;
+	static const char* archivoPosicionesRelativas;
 	virtual ~NombresArchivos();
 };
 
