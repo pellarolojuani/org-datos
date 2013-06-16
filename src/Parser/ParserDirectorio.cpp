@@ -9,13 +9,17 @@
 #include "../structures/abb/ArbolB.h"
 #include "../structures/abb/Nodo.h"
 #include "../FrontCoding/Frontcoding.h"
-
+#include "../NombresArchivos.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
 #include <time.h>
 #include <string>
+
+#ifndef LONG_MAX_LINEA
+#define LONG_MAX_LINEA 200
+#endif
 
 static const string CURR_DIR_STR = ".";
 static const string PARENT_DIR_STR = "..";
@@ -29,19 +33,19 @@ ParserDirectorio::ParserDirectorio(char* nombreDirectorio) {
 	arbolito = new abb::ArbolB<abb::Nodo, ORDEN_NODO>;
 
 	//TODO esto después cambiarlo
-	this->archivoDirectorios = fopen("/home/lucia/directorios.dat","w");
-	this->archivoPunteros = fopen("/home/lucia/punteros.dat","w");
-	this->archivoLexicoFC = fopen("/home/lucia/archivoLexico.dat","w");
-	this->tablaLexicoFC = fopen("/home/lucia/tablaLexico.dat","w");
+	this->archivoDirectorios = fopen(constantes::NombresArchivos::archivoDirectorios, "w");
+	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros, "w");
+	this->archivoLexicoFC = fopen(constantes::NombresArchivos::archivoLexico,"w");
+	this->tablaLexicoFC = fopen(constantes::NombresArchivos::archivoTablaLexico,"w");
 
 
 }
 
-int ParserDirectorio::parsearDirectorio(){
+void ParserDirectorio::parsearDirectorio(){
 	this->parsearDirectorioRec(this->nombreDirectorio);
 }
 
-int ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
+void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 
 	DIR *dir;
 	struct dirent *dit;
@@ -49,7 +53,6 @@ int ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	if ((dir = opendir(directorioRuta)) == NULL)
 	{
 		cout<<"El directorio "<<dit->d_name<<" no pudo a abrirse."<<endl;
-		return -1;
 	}
 
 	int i;
@@ -112,6 +115,8 @@ void ParserDirectorio::parseFile(FILE* dirAct){
 
 		string* parseo = this->parser->parsearLinea(linea,&posis);
 
+		cout<<"PARS 0   "<<parseo[0]<<"PARS 1   "<<parseo[1]<<endl;
+
 		for (int i = 0; i<posis.getCantPosiciones(); i++) {
 
 			//VEO SI YA ESTA EN EL ABB
@@ -146,7 +151,12 @@ bool ParserDirectorio::isCurrOrParentDir(const string& name)
 }
 
 ParserDirectorio::~ParserDirectorio() {
-	// TODO Auto-generated destructor stub
+	fclose(this->archivoDirectorios);
+	fclose(this->archivoPunteros);
+	fclose(this->archivoLexicoFC);
+	fclose(this->tablaLexicoFC);
+	free(parser);
+
 }
 
 } /* namespace parser */

@@ -16,9 +16,7 @@
 #include <errno.h>
 #include <string.h>
 
-#ifndef LONG_MAX_LINEA
-#define LONG_MAX_LINEA 300
-#endif
+
 
 namespace parser {
 
@@ -27,7 +25,7 @@ public:
 	ParserDirectorio();
 	ParserDirectorio(char* nombreDirectorio);
 
-	int parsearDirectorio();
+	void parsearDirectorio();
 
 	virtual ~ParserDirectorio();
 private:
@@ -41,7 +39,7 @@ private:
 	bool isCurrOrParentDir(const string& name);
 	void parseFile(FILE* archivo);
 
-	int parsearDirectorioRec(char* directorioRuta);
+	void parsearDirectorioRec(char* directorioRuta);
 
 	//Aca es donde ocurre la magia
 	abb::ArbolB<abb::Nodo, ORDEN_NODO>* arbolito;

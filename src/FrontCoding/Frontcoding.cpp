@@ -36,36 +36,37 @@ void Frontcoding::agregarPalabra(string str){
 
 //Esta función te devuelve cuántos caracteres distintos tiene el str uno con respecto al dos pero contando desde
 //que empiezan a ser distitnos. strDos tiene que ser mayor que strUno.
-string Frontcoding::compararPorCharDistintos(string uno, string dos, int* cantidad){
+string Frontcoding::compararPorCharDistintos(string uno, string dos, int* cantidadRepetidos){
 
 	int i = 0;
 	while ((uno[i] == dos[i])&&(i<uno.length()) && (i<dos.length())){
 		i++;
 	}
-	string s = dos;
-	int numDistintos = strlen(dos.c_str()) - i;
 
-	*cantidad = numDistintos;
-	s = dos.substr(i, strlen(dos.c_str()) );
+	*cantidadRepetidos = i;
+	string s = dos.substr(i, strlen(dos.c_str()) );
 	return s;
 }
 
-int Frontcoding::guardarEnArchivo(string str, int charsDistintos, int offset){
+int Frontcoding::guardarEnArchivo(string str, int charsIguales, int offset){
 	fputs(str.c_str(), this->archIntlexico);
 
 	stringstream s1;
-	s1 << charsDistintos;
+	s1 << charsIguales;
 	string strDist = s1.str();
-
-	fputs(strDist.c_str(), this->archIntTabla);
-	fputs(" ", this->archIntTabla);
 
 	stringstream ss;
 	ss << offset;
 	string strOffset = ss.str();
 
 	fputs(strOffset.c_str(), this->archIntTabla);
-	fputs("\n", this->archIntTabla);
+	fputs(",", this->archIntTabla);
+
+
+	fputs(strDist.c_str(), this->archIntTabla);
+	fputc('\n', this->archIntTabla);
+
+
 }
 
 

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <stdlib.h>
+#include <string>
 
 #ifndef FRONTCODING_H_
 #define FRONTCODING_H_
