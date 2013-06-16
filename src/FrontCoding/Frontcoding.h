@@ -4,6 +4,7 @@
  *  Created on: Jun 14, 2013
  *      Author: lucia
  */
+
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
@@ -26,7 +27,6 @@ public:
 
 	void agregarPalabra(string palabra);
 
-	void almacenarLexico();
 	virtual ~Frontcoding();
 private:
 	FILE* archIntlexico;
