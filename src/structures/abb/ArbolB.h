@@ -25,6 +25,8 @@ Axiomas: 1 - Todas sus hojas estan en el mismo nivel.
 #include <string.h>
 #include <stdio.h>
 #include "../../FrontCoding/Frontcoding.h"
+#include "../../PersistorPunteros/PersistorPunteros.h"
+#include "../../Parser/Posiciones.h"
 using namespace std;
 
 namespace abb {
@@ -119,8 +121,8 @@ class ArbolB{
 
 
     //FUNCION TOTALMENTE DESUBICADA ACA
-    void guardarLexico(frontcoding::Frontcoding FC){
-    	guardarLexicoRe(this->raiz, &FC);
+    void guardarLexico(frontcoding::Frontcoding FC, punteros::PersistorPunteros PP){
+    	guardarLexicoRe(this->raiz, &FC, &PP);
 
 
     }
@@ -146,19 +148,25 @@ class ArbolB{
             }
         }
 
-        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC)
+        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC, punteros::PersistorPunteros *PP)
 		{
 			int i;
 			if (actual){
 
 				for (i=0; i<actual->entradasOcupadas; i++)
 				{
+					//Guardo lexico
 					string palabrastr = (string) (actual->data[i].getPalabra());
-					guardarLexicoRe(actual->ramas[i], FC);
+					parser::Posiciones* documentos = (parser::Posiciones*) (actual->data[i].getOffsetsDocumentos());
+					parser::Posiciones* posicionesRel = (parser::Posiciones*) (actual->data[i].getPosiciones());
+					guardarLexicoRe(actual->ramas[i], FC, PP);
 					FC->agregarPalabra(palabrastr);
+					//PP->persistirDistancias(*documentos, *posicionesRel);
+					//Guardo punteros
+
 
 				}
-				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC);
+				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC, PP);
 			}
 		}
 
@@ -335,7 +343,7 @@ class ArbolB{
 				if ( resultado == false )
 					resultado = buscarRecursivamenteParaModify(actual->ramas[posicion], target);
 				else
-					target = actual->data[posicion];//PARTE QUE NO ENTIENDO.
+					actual->data[posicion] = target;//PARTE QUE NO ENTIENDO.
 			}
 			return resultado;
 		}

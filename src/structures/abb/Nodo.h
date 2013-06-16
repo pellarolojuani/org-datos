@@ -22,24 +22,24 @@ public:
 	virtual ~Nodo();
 
 	string getPalabra();
-	Posiciones getPosiciones();
+	Posiciones* getPosiciones();
 	int getOffsetPosiciones();
 	void setOffsetPosiciones(int offsetPosiciones);
-	void setPosiciones(Posiciones posiciones);
+	void setPosiciones(Posiciones* posiciones);
 	void setPalabra(string palabra);
 	int getFrecuencia();
 	void setFrecuencia(int frecuencia);
 
-	Posiciones getOffsetsDocumentos();
-	void setOffsetsDocumentos(Posiciones offsts);
+	Posiciones* getOffsetsDocumentos();
+	void setOffsetsDocumentos(Posiciones* offsts);
 
 	bool operator==(Nodo&);//compara a igual
 	bool operator<(Nodo&);//compara a menor
 	bool operator>(Nodo&);//compara a mayor
 	bool operator=(Nodo);//asigna
 private:
-	Posiciones posiciones;
-	Posiciones offsetsDocumentos;
+	Posiciones* posiciones;
+	Posiciones* offsetsDocumentos;
 	int frecuencia;
 	string palabra;
 	int offsetPosiciones;
