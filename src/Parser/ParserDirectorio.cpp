@@ -83,9 +83,10 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 
 					//TODO variable a codificar en gamma (sería el archivo donde aparece)
 					cout<<"Indexando directorio.."<<nombreDirectorio<<offset<<endl;
-					offset+= strlen(nombreDirectorio);
 
-					parseFile(dirAct);
+
+					parseFile(dirAct, offset);
+					offset+= strlen(nombreDirectorio);
 
 				} else {
 					parsearDirectorioRec(ruta);
@@ -96,8 +97,13 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 		closedir(dir);
 	}
 	arbolito->emitir();
-
 	this->almacenarLexico();
+
+	//CIERRO TODO
+	fclose(this->archivoDirectorios);
+	fclose(this->archivoPunteros);
+	fclose(this->archivoLexicoFC);
+	fclose(this->tablaLexicoFC);
 
 }
 
@@ -106,7 +112,7 @@ void ParserDirectorio::almacenarLexico(){
 	arbolito->guardarLexico(FC);
 }
 
-void ParserDirectorio::parseFile(FILE* dirAct){
+void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	//Paso a abrir el directorio y parsearlo linea por linea
 	char linea[LONG_MAX_LINEA];
 	Posiciones posis;
@@ -114,8 +120,6 @@ void ParserDirectorio::parseFile(FILE* dirAct){
 		posis.resetCantidadPosiciones();
 
 		string* parseo = this->parser->parsearLinea(linea,&posis);
-
-		cout<<"PARS 0   "<<parseo[0]<<"PARS 1   "<<parseo[1]<<endl;
 
 		for (int i = 0; i<posis.getCantPosiciones(); i++) {
 
@@ -129,13 +133,24 @@ void ParserDirectorio::parseFile(FILE* dirAct){
 				nodotar = arbolito->buscarYdevolver(nodotar);
 				nodotar.setFrecuencia(nodotar.getFrecuencia()+1);
 				nodotar.getPosiciones().agregarPosicion(posis.getPosiciones()[i]);
+				//TOMO EL ULTIMO DOCUMENTO AGREGADO:
+				int ultimaposicion = nodotar.getOffsetsDocumentos().getCantPosiciones();
+				int dist = (nodotar.getOffsetsDocumentos().getPosiciones()[ultimaposicion]) - offsetDocs;
+				//SI LA DISTANCIA ENTRE EL ULTIMO OFFSET AGREGADO Y ESTE ES 0 SIGNIFICA QUE YA ESTÁ AGREGADO.
+				if(dist > 0){
+					nodotar.getOffsetsDocumentos().agregarPosicion(offsetDocs);
+				}
 				this->arbolito->modify(nodotar);
 
 			} else {
 			//SI NO ESTA LO INSERTO.
 				Posiciones nuevasPosiciones;
+				Posiciones nuevosOffsetDocs;
 				nuevasPosiciones.agregarPosicion(posis.getPosiciones()[i]);
+				nuevosOffsetDocs.agregarPosicion(offsetDocs);
 				nodotar.setFrecuencia(1);
+				nodotar.setOffsetsDocumentos(nuevasPosiciones);
+				nodotar.setOffsetsDocumentos(nuevosOffsetDocs);
 				this->arbolito->insertar(nodotar);
 			}
 
@@ -151,10 +166,7 @@ bool ParserDirectorio::isCurrOrParentDir(const string& name)
 }
 
 ParserDirectorio::~ParserDirectorio() {
-	fclose(this->archivoDirectorios);
-	fclose(this->archivoPunteros);
-	fclose(this->archivoLexicoFC);
-	fclose(this->tablaLexicoFC);
+
 	free(parser);
 
 }

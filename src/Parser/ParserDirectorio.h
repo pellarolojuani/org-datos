@@ -37,7 +37,7 @@ private:
 	FILE* archivoLexicoFC;
 	FILE* tablaLexicoFC;
 	bool isCurrOrParentDir(const string& name);
-	void parseFile(FILE* archivo);
+	void parseFile(FILE* archivo, int offsetFile);
 
 	void parsearDirectorioRec(char* directorioRuta);
 
