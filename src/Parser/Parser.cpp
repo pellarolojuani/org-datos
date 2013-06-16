@@ -12,6 +12,7 @@ namespace parser {
 Parser::Parser() {
 	this->delimitadores = DELIMITADORES;
 	pos = 0;
+	numeroPalabra = 0;
 
 }
 
@@ -43,12 +44,14 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 
 			i++;
 
-
-			posicionesFinales->agregarPosicion(pos-(i-indiceComienzoPalabra-1));
-
+			//MODIFICO A: ahora en vez de la posicion de una palabra, te dice el numero de dicha palabra en el texto
+			//cosa que al buscar por frase sea mas facil determinar si dos palabras van seguidas.
+//			posicionesFinales->agregarPosicion(pos-(i-indiceComienzoPalabra-1));
+			posicionesFinales->agregarPosicion(numeroPalabra);
 
 			indiceComienzoPalabra=i;
 			//Se encontró una palabra.
+			numeroPalabra++;
 
 			arrayPalabras[indicePalabra] = tolowercase(palabra);
 			indicePalabra++;
@@ -85,8 +88,9 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 			string palabra = str.substr(indiceComienzoPalabra);
 			palabra=quitarFinDeLinea(palabra);
 			arrayPalabras[indicePalabra] = tolowercase(palabra);
+//			numeroPalabra++;
 
-			posicionesFinales->agregarPosicion(pos);
+			posicionesFinales->agregarPosicion(numeroPalabra);
 
 
 			indicePalabra++;
@@ -138,6 +142,7 @@ int Parser::getUltimaPosicion(){
 
 void Parser::resetUltimaPosicion(){
 	this->pos=0;
+	this->numeroPalabra=0;
 }
 
 string Parser::quitarFinDeLinea(string s){

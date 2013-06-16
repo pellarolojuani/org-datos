@@ -37,6 +37,7 @@ ParserDirectorio::ParserDirectorio(char* nombreDirectorio) {
 	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros, "w");
 	this->archivoLexicoFC = fopen(constantes::NombresArchivos::archivoLexico,"w");
 	this->tablaLexicoFC = fopen(constantes::NombresArchivos::archivoTablaLexico,"w");
+	this->archivoPosRelativas = fopen(constantes::NombresArchivos::archivoPosicionesRelativas, "w");
 
 
 }
@@ -99,7 +100,7 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	arbolito->emitir();
 	this->almacenarLexico();
 
-	//CIERRO TODO
+	//CIERRO TOOOODO
 	fclose(this->archivoDirectorios);
 	fclose(this->archivoPunteros);
 	fclose(this->archivoLexicoFC);
@@ -108,9 +109,13 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 }
 
 void ParserDirectorio::almacenarLexico(){
+	punteros::PersistorPunteros PP(this->archivoPunteros, this->archivoPosRelativas);
 	frontcoding::Frontcoding FC(this->archivoLexicoFC, this->tablaLexicoFC);
-	arbolito->guardarLexico(FC);
+	arbolito->guardarLexico(FC,PP);
+
 }
+
+
 
 void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	//Paso a abrir el directorio y parsearlo linea por linea
@@ -123,6 +128,8 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 
 		for (int i = 0; i<posis.getCantPosiciones(); i++) {
 
+			cout<<"Palabra: "<<parseo[i]<<" en la posicion "<<posis.getPosiciones()[i]<<endl;
+
 			//VEO SI YA ESTA EN EL ABB
 			abb::Nodo nodotar;
 			nodotar.setPalabra(parseo[i]);
@@ -131,25 +138,20 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 			//SI YA ESTA ACTUALIZO FRECUENCIA Y POSICIONES
 			if (esta) {
 				nodotar = arbolito->buscarYdevolver(nodotar);
+				//Agrego su nro de palabra:
+				nodotar.getPosiciones()->agregarPosicion(posis.getPosiciones()[i]);
 				nodotar.setFrecuencia(nodotar.getFrecuencia()+1);
-				nodotar.getPosiciones().agregarPosicion(posis.getPosiciones()[i]);
-				//TOMO EL ULTIMO DOCUMENTO AGREGADO:
-				int ultimaposicion = nodotar.getOffsetsDocumentos().getCantPosiciones();
-				int dist = (nodotar.getOffsetsDocumentos().getPosiciones()[ultimaposicion]) - offsetDocs;
-				//SI LA DISTANCIA ENTRE EL ULTIMO OFFSET AGREGADO Y ESTE ES 0 SIGNIFICA QUE YA ESTÁ AGREGADO.
-				if(dist > 0){
-					nodotar.getOffsetsDocumentos().agregarPosicion(offsetDocs);
-				}
+				nodotar.getOffsetsDocumentos()->agregarPosicion(offsetDocs);
 				this->arbolito->modify(nodotar);
 
 			} else {
 			//SI NO ESTA LO INSERTO.
-				Posiciones nuevasPosiciones;
-				Posiciones nuevosOffsetDocs;
-				nuevasPosiciones.agregarPosicion(posis.getPosiciones()[i]);
-				nuevosOffsetDocs.agregarPosicion(offsetDocs);
+				Posiciones* nuevasPosiciones = new Posiciones();
+				Posiciones* nuevosOffsetDocs = new Posiciones();
+				nuevasPosiciones->agregarPosicion(posis.getPosiciones()[i]);
+				nuevosOffsetDocs->agregarPosicion(offsetDocs);
 				nodotar.setFrecuencia(1);
-				nodotar.setOffsetsDocumentos(nuevasPosiciones);
+				nodotar.setPosiciones(nuevasPosiciones);
 				nodotar.setOffsetsDocumentos(nuevosOffsetDocs);
 				this->arbolito->insertar(nodotar);
 			}

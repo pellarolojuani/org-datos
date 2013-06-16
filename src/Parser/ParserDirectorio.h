@@ -10,6 +10,7 @@
 #include "Parser.h"
 #include "../structures/abb/ArbolB.h"
 #include "../structures/abb/Nodo.h"
+#include "../PersistorPunteros/PersistorPunteros.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -32,10 +33,14 @@ private:
 	Parser* parser;
 	char* nombreDirectorio;
 	FILE* archivoDirectorios;
+
 	FILE* archivoPunteros;
+	FILE* archivoPosRelativas;
 
 	FILE* archivoLexicoFC;
 	FILE* tablaLexicoFC;
+
+
 	bool isCurrOrParentDir(const string& name);
 	void parseFile(FILE* archivo, int offsetFile);
 
@@ -45,6 +50,7 @@ private:
 	abb::ArbolB<abb::Nodo, ORDEN_NODO>* arbolito;
 
 	void almacenarLexico();
+	void almacenarPunteros();
 };
 
 } /* namespace parser */
