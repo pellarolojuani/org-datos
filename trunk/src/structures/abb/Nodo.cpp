@@ -18,11 +18,11 @@ string Nodo::getPalabra(){
 	return this->palabra;
 }
 
-Posiciones Nodo::getOffsetsDocumentos(){
+Posiciones* Nodo::getOffsetsDocumentos(){
 	return this->offsetsDocumentos;
 }
 
-void Nodo::setOffsetsDocumentos(Posiciones offsts){
+void Nodo::setOffsetsDocumentos(Posiciones* offsts){
 	this->offsetsDocumentos = offsts;
 }
 
@@ -30,11 +30,11 @@ void Nodo::setPalabra(string palabra){
 	this->palabra = palabra;
 }
 
-Posiciones Nodo::getPosiciones(){
+Posiciones* Nodo::getPosiciones(){
 	return this->posiciones;
 }
 
-void Nodo::setPosiciones(Posiciones posiciones){
+void Nodo::setPosiciones(Posiciones* posiciones){
 	this->posiciones = posiciones;
 }
 
