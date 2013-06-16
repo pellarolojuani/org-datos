@@ -86,9 +86,9 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 					cout<<"Indexando directorio.."<<nombreDirectorio<<offset<<endl;
 
 
-					parseFile(dirAct, offset);
+					//parseFile(dirAct, offset);
 					offset+= strlen(nombreDirectorio);
-
+					parseFile2(dirAct);
 				} else {
 					parsearDirectorioRec(ruta);
 				}
@@ -162,6 +162,28 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	}
 
 }
+
+void almacenarMapa(map<string, StringMatch> mapa, FILE* archivo){
+	map<string, StringMatch>::iterator iter;
+	for (iter = mapa.begin(); iter != mapa.end(); iter++){
+
+		//fputs(iter->first.c_str(), archivo);
+		fputs(iter->second.getStringUbicaciones(), archivo);
+	}
+}
+
+map<string, StringMatch> ParserDirectorio::parseFile2(FILE* dirAct){
+	//Paso a abrir el directorio y parsearlo linea por linea
+	char linea[LONG_MAX_LINEA];
+	map<string, StringMatch> posiciones;
+	this->parser->setNroDoc(1);
+	while (fgets(linea, LONG_MAX_LINEA, dirAct) != NULL){
+		posiciones = this->parser->parsearLinea(linea);
+	}
+	almacenarMapa(posiciones, this->archivoPunteros);
+	return posiciones;
+}
+
 bool ParserDirectorio::isCurrOrParentDir(const string& name)
 {
 	return name == CURR_DIR_STR || name == PARENT_DIR_STR;

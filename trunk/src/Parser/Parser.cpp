@@ -53,6 +53,7 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 			//Se encontró una palabra.
 			numeroPalabra++;
 
+
 			arrayPalabras[indicePalabra] = tolowercase(palabra);
 			indicePalabra++;
 
@@ -108,6 +109,81 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 
 }
 
+map<string, StringMatch>  Parser::parsearLinea(string str){
+	map<string, StringMatch> mapaPalabras;
+
+	//Proceso caracter a caracter y voy formando palabras.
+	string palabra = "";
+	unsigned int i = 0;
+	unsigned int indiceComienzoPalabra = 0;
+
+	while ( i < str.length() ){
+		char caracter = str.at(i);
+
+		if ((this->esDelimitador(caracter,&delimitadores))&&(i!=0)){
+
+			string palabra;
+			if(i == str.length()-1){
+				palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)-1);
+			} else
+				palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
+			i++;
+
+
+			mapaPalabras[palabra].agregarUbicacion(pos-(i-indiceComienzoPalabra-1));
+
+
+			indiceComienzoPalabra=i;
+			//Se encontró una palabra.
+
+
+			bool esCaracterFinal = false;
+			if(i < str.length()){
+				caracter=str.at(i);
+			} else
+				esCaracterFinal = true;
+
+			//Si llego a tener varios delimitadores seguidos, por ejemplo "; " los escapeo.
+			while((this->esDelimitador(caracter,&delimitadores)&&!esCaracterFinal)){
+				i++;
+				indiceComienzoPalabra=i;
+				if(i < str.length()){
+					caracter=str.at(i);
+				} else
+					esCaracterFinal = true;
+			}
+
+		} else if ((this->esDelimitador(caracter,&delimitadores))&&(i == 0)){
+			bool esCaracterFinal = false;
+			while((this->esDelimitador(caracter,&delimitadores)&&!esCaracterFinal)){
+				i++;
+				indiceComienzoPalabra=i;
+				if(i < str.length()){
+					caracter=str.at(i);
+				} else
+					esCaracterFinal = true;
+			}
+		}
+
+		else if (i == str.length()-1) {
+			string palabra = str.substr(indiceComienzoPalabra);
+			palabra=quitarFinDeLinea(palabra);
+			mapaPalabras[palabra].agregarUbicacion(pos-(i-indiceComienzoPalabra-1));
+
+			i++;
+		}
+
+		else
+			i++;
+		pos++;
+
+	}
+
+
+	return mapaPalabras;
+
+}
+
 bool Parser::esDelimitador(char c, string* delimitadores){
 	//Determino si es una letra mediante codigo ascii.
 
@@ -143,6 +219,12 @@ int Parser::getUltimaPosicion(){
 void Parser::resetUltimaPosicion(){
 	this->pos=0;
 	this->numeroPalabra=0;
+}
+
+
+void Parser::setNroDoc(int nroDoc)
+{
+	this->nroDoc = nroDoc;
 }
 
 string Parser::quitarFinDeLinea(string s){

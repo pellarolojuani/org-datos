@@ -10,6 +10,7 @@
 #include "Parser.h"
 #include "../structures/abb/ArbolB.h"
 #include "../structures/abb/Nodo.h"
+#include "../text/StringMatch.h"
 #include "../PersistorPunteros/PersistorPunteros.h"
 #include <stdio.h>
 #include <sys/types.h>
@@ -43,6 +44,7 @@ private:
 
 	bool isCurrOrParentDir(const string& name);
 	void parseFile(FILE* archivo, int offsetFile);
+	map<string, StringMatch> parseFile2(FILE* archivo);
 
 	void parsearDirectorioRec(char* directorioRuta);
 
