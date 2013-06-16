@@ -39,6 +39,7 @@ private:
 	void agregarPalabra(string palabra, string* palabras, int cantPalabras);
 	string tolowercase(string s);
 	int pos;
+	int numeroPalabra;
 	string quitarFinDeLinea(string s);
 };
 
