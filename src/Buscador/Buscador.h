@@ -19,7 +19,7 @@ class Buscador {
 public:
 	Buscador();
 
-	abb::Nodo* buscarTermino(string term);
+	abb::Nodo buscarTermino(string term);
 
 
 
