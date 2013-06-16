@@ -14,6 +14,7 @@
 #include "FrontCoding/Frontcoding.h"
 #include "structures/abb/Nodo.h"
 #include "structures/abb/ArbolB.h"
+#include "Buscador/Buscador.h"
 
 using namespace std;
 void testParsearLinea();
@@ -24,10 +25,13 @@ abb::Nodo setNodo(int);
 
 int main() {
 
-	char* textos = "/home/lucia/test";
+	char* textos = "/home/lucia/miau";
 //	testParsearLinea();
 	parser::ParserDirectorio pars(textos);
 	pars.parsearDirectorio();
+
+//
+//	buscador::Buscador *busq = new buscador::Buscador();
 
 //	testNodo();
 //
@@ -35,9 +39,18 @@ int main() {
 
 //	testFrontCoding();
 
+//	abb::Nodo n;
+//	cout<<"FREC:  "<<n.getFrecuencia()<<endl;
+//	n = busq->buscarTermino("cinco");
+
+//
+//	cout<<n.getPalabra()<<endl;
+//	cout<<"FREC:  "<<n.getFrecuencia()<<endl;
+
 	cout << "Goodbye matrix, hello world!" << endl;
 	return 0;
 }
+
 
 abb::Nodo setNodo(int j){
 	abb::Nodo nodo;
@@ -46,7 +59,7 @@ abb::Nodo setNodo(int j){
 	parser::Posiciones poss;
 	string* test = pars.parsearLinea(str, &poss);
 
-	nodo.setFrecuencia(1);
+	nodo.setFrecuencia(45);
 	nodo.setPalabra(test[j]);
 	nodo.setOffsetPosiciones(4);
 	nodo.setPosiciones(poss);
@@ -84,11 +97,10 @@ void testAbb(){
 //
 	nodoBusq.setFrecuencia(4);
 
-	bool encontrado = arbolito.buscar(nodoBusq);
+	nodoBusq = arbolito.buscarYdevolver(nodoBusq);
 	cout<<nodoBusq.getFrecuencia()<<endl;
 
-	if(encontrado) cout<<"fue encontrado"<<endl;
-	else cout<<"no fue encontrado"<<endl;
+
 
 
 
@@ -148,7 +160,7 @@ void testNodo(){
 
 void testParsearLinea(){
 	//Pruebas parser
-	string str = "         sdasdas dsfdsfhdskk dsafaskds ahdskfhadsfh dashkkadsf dskk    ";
+	string str = "12,1";
 	parser::Parser pars;
 	int i;
 
@@ -161,14 +173,14 @@ void testParsearLinea(){
 	for (int i = 0; i<poss.getCantPosiciones(); i++) {
 		cout<<"Palabra: "<<test[i]<<" en la posicion "<<poss.getPosiciones()[i]<<endl;
 	}
-
-	string uno= " So,\" he commented, \"they learn wisdom and come to be head men. But why \"";
-	parser::Posiciones poss2;
-	test = pars.parsearLinea(uno, &poss2);
-	string* test2 = pars.parsearLinea(uno, &poss2);
-	for (int i = 0; i<poss.getCantPosiciones(); i++) {
-		cout<<"Palabra: "<<test2[i]<<" en la posicion "<<poss2.getPosiciones()[i]<<endl;
-	}
+//
+//	string uno= " So,\" he commented, \"they learn wisdom and come to be head men. But why \"";
+//	parser::Posiciones poss2;
+//	test = pars.parsearLinea(uno, &poss2);
+//	string* test2 = pars.parsearLinea(uno, &poss2);
+//	for (int i = 0; i<poss.getCantPosiciones(); i++) {
+//		cout<<"Palabra: "<<test2[i]<<" en la posicion "<<poss2.getPosiciones()[i]<<endl;
+//	}
 
 
 //	string dos = "have you come, Strong Father, with so many canoes? Do you build a new";
@@ -198,10 +210,10 @@ void testFrontCoding(){
 	cout<<dist<<" "<<cant<<endl;;
 
 	dist = FC.compararPorCharDistintos(aab,casa,&cant);
-	cout<<"aab casa"<<dist<<" "<<cant<<endl;
+	cout<<"aab casa "<<dist<<" "<<cant<<endl;
 
 	dist = FC.compararPorCharDistintos(casa,casita,&cant);
-	cout<<"casa casita"<<dist<<" "<<cant<<endl;
+	cout<<"casa casita "<<dist<<" "<<cant<<endl;
 
 }
 
