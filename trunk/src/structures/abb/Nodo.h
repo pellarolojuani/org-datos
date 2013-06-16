@@ -30,15 +30,21 @@ public:
 	int getFrecuencia();
 	void setFrecuencia(int frecuencia);
 
+	Posiciones getOffsetsDocumentos();
+	void setOffsetsDocumentos(Posiciones offsts);
+
 	bool operator==(Nodo&);//compara a igual
 	bool operator<(Nodo&);//compara a menor
 	bool operator>(Nodo&);//compara a mayor
 	bool operator=(Nodo);//asigna
 private:
 	Posiciones posiciones;
+	Posiciones offsetsDocumentos;
 	int frecuencia;
 	string palabra;
 	int offsetPosiciones;
+	int offsetPunteros;
+
 };
 
 } /* namespace abb */
