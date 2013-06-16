@@ -28,7 +28,7 @@ void Frontcoding::agregarPalabra(string str){
 		int cant;
 		string substr = compararPorCharDistintos(palabraAnterior,str,&cant);
 		this->guardarEnArchivo(substr, cant, offset);
-		offset+=substr.length();
+		this->offset+=substr.length();
 		this->palabraAnterior = str;
 
 	}
