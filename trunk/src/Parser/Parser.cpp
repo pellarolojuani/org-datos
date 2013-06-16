@@ -38,10 +38,9 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 		if ((this->esDelimitador(caracter,&delimitadores))&&(i!=0)){
 
 			string palabra;
-			if(i == str.length()-1){
-				palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra)-1);
-			} else
-				palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
+
+			palabra = str.substr(indiceComienzoPalabra, (i-indiceComienzoPalabra));
+
 			i++;
 
 
@@ -108,16 +107,16 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
 bool Parser::esDelimitador(char c, string* delimitadores){
 	//Determino si es una letra mediante codigo ascii.
 
-	if( ( ( c >= 97 ) && ( c <= 122 ) ) || ( c == 47 ) ||( ( c >= 65 ) && ( c <= 90 ) ) ||( c == 195 ) ||
-			( c == 161 ) || ( c == 129 )|| ( c == 169 ) ||
-			( c == 137 ) || ( c == 173 )|| ( c == 141 ) ||
-			( c == 179 ) || ( c == 147 )|| ( c == 186 ) ||( c == 154 ) || ( c == 177 )|| ( c == 145 ) ){
+	if (((c >= 97) && (c <= 122)) ||((c >= 65) && (c <= 90)) ||( c == 195 ) ||
+//			(c == 161) || (c == 129)|| (c == 169) ||
+//			(c == 137) || (c == 173)|| (c == 141) || (c == 47) ||
+			(c == 179) || (c == 147)|| (c == 186) || (c == 154) || (c == 177)|| (c == 145)){
 
 			return false ;
 
-		}else{
-
-			if( ( c >= 47 ) && ( c <= 57 ) ){
+		} else {
+			//indexo la barra
+			if( (c > 47) && (c <= 57)){
 				//es un numero
 				return false ;
 			}
