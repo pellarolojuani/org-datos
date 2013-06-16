@@ -105,7 +105,6 @@ class ArbolB{
 
     T buscarYdevolver(T target)
 	/*
-	LOT OF ZARAZA ZAZAZ
 	*/
 	{
 		T* dato = new T;
@@ -121,7 +120,7 @@ class ArbolB{
 
     //FUNCION TOTALMENTE DESUBICADA ACA
     void guardarLexico(frontcoding::Frontcoding FC){
-    	guardarLexicoRe(this->raiz, FC);
+    	guardarLexicoRe(this->raiz, &FC);
 
 
     }
@@ -137,8 +136,9 @@ class ArbolB{
                 for (i=0; i<actual->entradasOcupadas; i++)
                 {
                     emitirRecursivo(actual->ramas[i]);
-                    cout << "PLABRA    " << actual->data[i].getPalabra() <<"  FIN";
-                    //cout << actual->data[i].getFrecuencia();
+                    cout <<actual->data[i].getPalabra();
+                    cout << "      frec: ";
+                    cout << actual->data[i].getFrecuencia();
                     cout << endl;
 
                 }
@@ -146,7 +146,7 @@ class ArbolB{
             }
         }
 
-        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding FC)
+        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC)
 		{
 			int i;
 			if (actual){
@@ -155,7 +155,7 @@ class ArbolB{
 				{
 					string palabrastr = (string) (actual->data[i].getPalabra());
 					guardarLexicoRe(actual->ramas[i], FC);
-					FC.agregarPalabra(palabrastr);
+					FC->agregarPalabra(palabrastr);
 
 				}
 				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC);
@@ -380,7 +380,7 @@ class ArbolB{
 
 			if ( actual != NULL )
 			{
-				resultado = buscarEnNodoParaDevolver(actual, target, posicion, &devuelto);
+				resultado = buscarEnNodoParaDevolver(actual, target, posicion, devuelto);
 				if ( resultado == false )
 					resultado = buscarRecursivamenteParaDevolver(actual->ramas[posicion], target, devuelto);
 				else
@@ -391,7 +391,7 @@ class ArbolB{
 
 
 
-		bool buscarEnNodoParaDevolver(B_nodo<T,orden>* actual, T& target, int &posicion, T** devuelto)
+		bool buscarEnNodoParaDevolver(B_nodo<T,orden>* actual, T& target, int &posicion, T* devuelto)
 		{
 			posicion = 0;
 
@@ -403,7 +403,7 @@ class ArbolB{
 			}
 
 			if (( posicion < actual->entradasOcupadas )&&( target == actual->data[posicion] )){
-				**devuelto = actual->data[posicion];
+				*devuelto = actual->data[posicion];
 				return true;
 			}
 
@@ -413,7 +413,7 @@ class ArbolB{
 
 
 
-};
+	};
 
 }
 
