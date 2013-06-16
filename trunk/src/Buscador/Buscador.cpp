@@ -34,40 +34,49 @@ Buscador::Buscador() {
 
 }
 
+abb::Nodo Buscador::buscarTermino(string term){
+
+	abb::Nodo nodob;;
+	nodob.setPalabra(term);
+
+	if(arbolB->buscar(nodob)){
+		arbolB->buscarYdevolver(nodob);
+	} else
+		return nodob;
+	return nodob;
+}
+
 void Buscador::levantarArbol(){
 	char linea[LONG_MAX_LINEA];
 	string palabraAnterior = "";
-
-
 	//Tengo que agarrar la primera.
 	fgets(linea, LONG_MAX_LINEA, this->tablalexico);
 	Parser pars;
-
 	Posiciones p;
-
-
 	int posicionAnterior = 0;
 	int iguales = 0;
-
-
 	while (fgets(linea, LONG_MAX_LINEA, this->tablalexico) != NULL){
 		p.resetCantidadPosiciones();
 		//AGARRO LA SIGUIENTE LINEA Y LA TENGO QUE COMPARAR CON LA ANTERIOR PARA SACAR LA LONGITUD DE LA PALABRA
 		string* tokens = pars.parsearLinea(linea, &p);
 		cout<<linea<<endl;
+
+		//Horrible implemetacion de split:
+		stringstream s0;
+		string lineaStr;
+		s0 << linea;
+		s0 >> lineaStr;
+		cout<<lineaStr<<endl;
+		int j=0;
+		for(int i=0; lineaStr[i]!=','; i++){
+			j++;
+		}
+		cout<<j<<"    veeer jota"<<endl;
+
 		int posicionSig = atoi(tokens[0].c_str());
-
-		cout<<"VER:  "<<p.getPosiciones()[1]<<endl;
-
-		cout<<"TOK 0: "<<tokens[0]<<" | TOK 1: "<<tokens[1]<<"  | TOK2 :"<<tokens[2]<<" |  TOK3 :"<<tokens[3]<<endl;
-		cout<<p.getCantPosiciones()<<endl;
-		cout<<"La poscion: "<<tokens[0]<<endl;
-		cout<<"La cantidad de chars iguales "<<tokens[1]<<endl;
-
 
 		//LA LONG DEL ANTERIOR ES LA POSICION ACTUAL MENOS LA ANTERIOR.
 		int longitud = posicionSig - posicionAnterior;
-
 
 		//LOS CARACTERES IGUALES VIENEN DEL ANTERIOR, TODAVIA NO HAY QUE ACTUALIZARLOS
 		fseek(this->archivoLexico, posicionAnterior, SEEK_SET);
@@ -99,17 +108,12 @@ void Buscador::levantarArbol(){
 
 		//ACTUALIZO TOOOOODO
 		palabraAnterior = strPalabra;
-		iguales = atoi(tokens[1].c_str());
+		iguales = atoi(lineaStr.substr(j+1, lineaStr.length()).c_str());
 		posicionAnterior = posicionSig;
 
-
-
-
+		cout<<"IGUALES: "<<iguales<<"POSICION: "<<posicionSig<<endl;
 
 		free(buffer);
-
-
-
 
 	}
 
