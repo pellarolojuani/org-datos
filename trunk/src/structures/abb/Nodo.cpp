@@ -12,6 +12,7 @@ namespace abb {
 Nodo::Nodo() {
 	documentos = NULL;
 	posiciones = NULL;
+	frecuencias = NULL;
 	frecuencia = 0;
 	offsetPosiciones = 0;
 	offsetPunteros = 0;
@@ -29,6 +30,14 @@ Posiciones* Nodo::getDocumentos(){
 
 void Nodo::setDocumentos(Posiciones* posiciones){
 	this->documentos = posiciones;
+}
+
+bool Nodo::fueEncontrado(){
+	return this->encontrado;
+}
+
+void Nodo::setEncontrado(bool encontrado){
+	this->encontrado = encontrado;
 }
 
 void Nodo::setLineaTabla(long int l){
@@ -49,6 +58,14 @@ Posiciones* Nodo::getPosiciones(){
 
 void Nodo::setPosiciones(Posiciones* posiciones){
 	this->posiciones = posiciones;
+}
+
+Posiciones* Nodo::getFrecuencias(){
+	return this->frecuencias;
+}
+
+void Nodo::setFrecuencias(Posiciones* frecuencias){
+	this->frecuencias = frecuencias;
 }
 
 int Nodo::getFrecuencia(){
@@ -81,8 +98,10 @@ bool Nodo::operator=(Nodo nuevoFF)
 	this->frecuencia = nuevoFF.getFrecuencia();
 	this->posiciones = nuevoFF.getPosiciones();
 	this->documentos = nuevoFF.getDocumentos();
+	this->frecuencias = nuevoFF.getFrecuencias();
 	this->lineaTabla = nuevoFF.getLineaTabla();
 	this->palabra = nuevoFF.getPalabra();
+	this->encontrado = nuevoFF.fueEncontrado();
 
 	return true;
 }
