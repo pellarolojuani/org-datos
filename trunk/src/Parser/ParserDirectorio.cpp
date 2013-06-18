@@ -17,9 +17,6 @@
 #include <time.h>
 #include <string>
 
-#ifndef LONG_MAX_LINEA
-#define LONG_MAX_LINEA 200
-#endif
 
 static const string CURR_DIR_STR = ".";
 static const string PARENT_DIR_STR = "..";
@@ -86,9 +83,9 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 					cout<<"Indexando directorio.."<<nombreDirectorio<<offset<<endl;
 
 
-					//parseFile(dirAct, offset);
+					parseFile(dirAct, offset);
 					offset+= strlen(nombreDirectorio);
-					parseFile2(dirAct);
+
 				} else {
 					parsearDirectorioRec(ruta);
 				}
@@ -97,7 +94,19 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 		}
 		closedir(dir);
 	}
+	abb::Nodo nod;
+	//TODO ARREGLAR ESTA GUASADA
+	//lo agregue porque al levantar el arbol misteriosamente no toma la ultima palabra. APCSC.
+	nod.setPalabra("zzzzzzzzzzzz");
+	Posiciones* pos = new parser::Posiciones();
+	pos->agregarPosicion(0);
+	nod.setDocumentos(pos);
+	nod.setPosiciones(pos);
+	arbolito->insertar(nod);
+
+
 	arbolito->emitir();
+
 	this->almacenarLexico();
 
 	//CIERRO TOOOODO
@@ -105,14 +114,14 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	fclose(this->archivoPunteros);
 	fclose(this->archivoLexicoFC);
 	fclose(this->tablaLexicoFC);
+	fclose(this->archivoPosRelativas);
 
 }
 
 void ParserDirectorio::almacenarLexico(){
 	punteros::PersistorPunteros PP(this->archivoPunteros, this->archivoPosRelativas);
 	frontcoding::Frontcoding FC(this->archivoLexicoFC, this->tablaLexicoFC);
-	arbolito->guardarLexico(FC,PP);
-
+	arbolito->guardarLexico(FC, PP);
 }
 
 
@@ -121,14 +130,15 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	//Paso a abrir el directorio y parsearlo linea por linea
 	char linea[LONG_MAX_LINEA];
 	Posiciones posis;
+
 	while (fgets(linea, LONG_MAX_LINEA, dirAct) != NULL){
 		posis.resetCantidadPosiciones();
 
 		string* parseo = this->parser->parsearLinea(linea,&posis);
 
-		for (int i = 0; i<posis.getCantPosiciones(); i++) {
 
-			cout<<"Palabra: "<<parseo[i]<<" en la posicion "<<posis.getPosiciones()[i]<<endl;
+
+		for (int i = 0; i<posis.getCantPosiciones(); i++) {
 
 			//VEO SI YA ESTA EN EL ABB
 			abb::Nodo nodotar;
@@ -141,18 +151,21 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 				//Agrego su nro de palabra:
 				nodotar.getPosiciones()->agregarPosicion(posis.getPosiciones()[i]);
 				nodotar.setFrecuencia(nodotar.getFrecuencia()+1);
-				nodotar.getOffsetsDocumentos()->agregarPosicion(offsetDocs);
+				nodotar.getDocumentos()->agregarPosicion(offsetDocs);
 				this->arbolito->modify(nodotar);
 
 			} else {
 			//SI NO ESTA LO INSERTO.
-				Posiciones* nuevasPosiciones = new Posiciones();
 				Posiciones* nuevosOffsetDocs = new Posiciones();
+				Posiciones* nuevasPosiciones = new Posiciones();
+
 				nuevasPosiciones->agregarPosicion(posis.getPosiciones()[i]);
 				nuevosOffsetDocs->agregarPosicion(offsetDocs);
+
 				nodotar.setFrecuencia(1);
 				nodotar.setPosiciones(nuevasPosiciones);
-				nodotar.setOffsetsDocumentos(nuevosOffsetDocs);
+				nodotar.setDocumentos(nuevosOffsetDocs);
+
 				this->arbolito->insertar(nodotar);
 			}
 
@@ -162,28 +175,6 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	}
 
 }
-
-void almacenarMapa(map<string, StringMatch> mapa, FILE* archivo){
-	map<string, StringMatch>::iterator iter;
-	for (iter = mapa.begin(); iter != mapa.end(); iter++){
-
-		//fputs(iter->first.c_str(), archivo);
-		fputs(iter->second.getStringUbicaciones(), archivo);
-	}
-}
-
-map<string, StringMatch> ParserDirectorio::parseFile2(FILE* dirAct){
-	//Paso a abrir el directorio y parsearlo linea por linea
-	char linea[LONG_MAX_LINEA];
-	map<string, StringMatch> posiciones;
-	this->parser->setNroDoc(1);
-	while (fgets(linea, LONG_MAX_LINEA, dirAct) != NULL){
-		posiciones = this->parser->parsearLinea(linea);
-	}
-	almacenarMapa(posiciones, this->archivoPunteros);
-	return posiciones;
-}
-
 bool ParserDirectorio::isCurrOrParentDir(const string& name)
 {
 	return name == CURR_DIR_STR || name == PARENT_DIR_STR;
