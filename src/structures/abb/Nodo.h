@@ -31,12 +31,19 @@ public:
 	Posiciones* getDocumentos();
 	void setDocumentos(Posiciones* posiciones);
 
+	Posiciones* getFrecuencias();
+	void setFrecuencias(Posiciones* frecuencias);
+
 	void setPalabra(string palabra);
 	int getFrecuencia();
 	void setFrecuencia(int frecuencia);
 
 	void setLineaTabla(long int l);
 	long int getLineaTabla();
+
+	bool fueEncontrado();
+	void setEncontrado(bool encontrado);
+
 
 
 	bool operator==(Nodo&);//compara a igual
@@ -46,11 +53,13 @@ public:
 private:
 	Posiciones* posiciones;
 	Posiciones* documentos;
+	Posiciones* frecuencias;
 	int frecuencia;
 	string palabra;
 	int offsetPosiciones;
 	int offsetPunteros;
 	long int lineaTabla;
+	bool encontrado;
 
 };
 
