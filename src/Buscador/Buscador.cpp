@@ -12,6 +12,9 @@
 #include "../Parser/Posiciones.h"
 #include <stdlib.h>
 
+#ifndef LONG_MAX_STRING_BUSQUEDA
+#define LONG_MAX_STRING_BUSQUEDA 500
+#endif
 
 
 //DEFINICION DUPLICADA
@@ -35,6 +38,203 @@ Buscador::Buscador() {
 
 }
 
+match::Match* Buscador::buscarFrase(string frase){
+
+	//PARSEO LA FRASE DE LA MISMA FORMA QUE PARSEABA AL ARMAR EL INDICE
+	parser::Parser pars;
+	parser::Posiciones posiciones;
+	string* palabras = pars.parsearLinea(frase, &posiciones, LONG_MAX_STRING_BUSQUEDA);
+
+	match::Match* match = new match::Match();
+
+	abb::Nodo nodosEncontrados[LONG_MAX_STRING_BUSQUEDA];
+
+	bool estanTodas = estanTodasLasPalabras(nodosEncontrados, palabras, posiciones.getCantPosiciones());
+	if(!estanTodas) {
+		match->setEncontroFrase(false);
+		match->setOffsetsDocumentos(new Posiciones());
+		return match;
+	}
+
+	//imprimo las posiciones de todos a ver que onda
+	for (int i=0; i<posiciones.getCantPosiciones(); i++) {
+		abb::Nodo nodo = nodosEncontrados[i];
+		cout<<"Posiciones:  "<<nodo.getPalabra()<<endl;
+		for (int i=0; i<nodo.getPosiciones()->getCantPosiciones(); i++){
+			cout<<nodo.getPosiciones()->getPosiciones()[i]<<"   ";
+		}
+		cout<<endl;
+		cout<<"DOCUMENTOS:  "<<endl;
+		for (int i=0; i<nodo.getDocumentos()->getCantPosiciones(); i++){
+			cout<<nodo.getDocumentos()->getPosiciones()[i]<<"   ";
+		}
+		cout<<endl;
+		cout<<"Frecuencias:  "<<endl;
+		for (int i=0; i<nodo.getFrecuencias()->getCantPosiciones(); i++){
+			cout<<nodo.getFrecuencias()->getPosiciones()[i]<<"   ";
+		}
+		cout<<endl;
+	}
+
+
+	abb::Nodo menor = nodosEncontrados[0];
+	//Agarro el que tiene menor cantidad de documentos:
+	for (int i=0; i <posiciones.getCantPosiciones(); i++){
+		if(nodosEncontrados[i].getDocumentos()->getCantPosiciones() < menor.getDocumentos()->getCantPosiciones()){
+			menor = nodosEncontrados[i];
+		}
+	}
+	//Empiezo tomando los documentos que tienen a todas las palabras
+	Posiciones matchDocumentos;
+	bool documentoCandidato=true;
+	for(int i=0; i<menor.getDocumentos()->getCantPosiciones(); i++){
+		int documento = menor.getDocumentos()->getPosiciones()[i];
+		bool nuevoMatch = esDocumentoCandidato(nodosEncontrados,posiciones.getCantPosiciones(), documento);
+		if(nuevoMatch){
+			matchDocumentos.agregarPosicion(documento);
+		}
+
+	}
+
+	Posiciones* matchFrases = new Posiciones();
+
+	cout<<"matches documentos:  "<<endl;
+	for (int i=0; i<matchDocumentos.getCantPosiciones(); i++){
+		cout<<matchDocumentos.getPosiciones()[i]<<"   ";
+	}
+	cout<<endl;
+
+	//Por cada documento matcheado me tengo que fijar si el orden que siguen las palabras de la frase es el correcto.
+	for (int i=0; i<matchDocumentos.getCantPosiciones(); i++){
+		bool documentoMatch = true;
+		int documento = matchDocumentos.getPosiciones()[i];
+		//Caso especial: si es una sola palabra la que estoy buscando, todos los documentos son match.
+		if(posiciones.getCantPosiciones() == 1) {
+			matchFrases->agregarPosicion((matchDocumentos.getPosiciones()[i]));
+		}
+
+		int j=0;
+		while(j<(posiciones.getCantPosiciones()-1) && documentoMatch){
+			documentoMatch = esPalabraSiguiente(nodosEncontrados[j], nodosEncontrados[j+1], documento);
+			cout<<documentoMatch<<endl;
+			j++;
+		}
+		if(documentoMatch){
+			matchFrases->agregarPosicion(matchDocumentos.getPosiciones()[i]);
+			cout<<"DOC MATCH: "<<matchDocumentos.getPosiciones()[i];
+			cout<<"LA ENCONTRO"<<endl;
+
+
+		}
+	}
+	match->setOffsetsDocumentos(matchFrases);
+	return match;
+
+}
+
+bool Buscador::estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras){
+	//BUSCO CADA FRASE EN EL ARBOL SI UNA NO ESTA ZARAZA
+	bool estanTodas = true;
+	for(int i = 0; i<cantidadPalabras; i++){
+		abb::Nodo n1;
+		n1.setPalabra(palabras[i]);
+		bool encontrado = arbolB->buscar(n1);
+		if(!(encontrado)){
+			estanTodas = false;
+		}
+		if(!estanTodas){
+			return false;
+		} else {
+			abb::Nodo n;
+			n=buscarTermino(palabras[i]);
+			nodosEncontrados[i] = n;
+
+		}
+
+	}
+	return true;
+
+
+}
+
+bool Buscador::esPalabraSiguiente(abb::Nodo n1, abb::Nodo n2, int doc){
+	int frec1 = 0;
+	int frec2 = 0;
+
+
+	int pos1 = this->getPosPalabraEnVectorPosiciones(n1,doc,&frec1);
+	int pos2 = this->getPosPalabraEnVectorPosiciones(n2,doc,&frec2);
+	int pos2Original = pos2;
+
+	cout<<"palabras : "<<n1.getPalabra()<<endl;
+	cout<<"palabras : "<<n2.getPalabra()<<endl;
+
+	for(int i=0; i<frec1; i++){
+		for(int j=0; j<frec2; j++){
+			int ubicacionPalabra1 = n1.getPosiciones()->getPosiciones()[pos1];
+			cout<<ubicacionPalabra1<<endl;
+			int ubicacionPalabra2menosUno = n2.getPosiciones()->getPosiciones()[pos2]-1;
+			cout<<ubicacionPalabra1<<endl;
+			bool esSiguiente =  ((ubicacionPalabra1) == (ubicacionPalabra2menosUno));
+			if(esSiguiente){
+				return true;
+			}
+			pos2++;
+		}
+		//Tengo que reiniciar pos2
+		pos2=pos2Original;
+		pos1++;
+	}
+	return false;
+}
+
+
+//Devuelve la posicion en el vector posiciones de una palabra dado un documento.
+int Buscador::getPosPalabraEnVectorPosiciones(abb::Nodo n1, int doc, int* frecuenciaADevolver){
+	//i: posicion en el vector de documentos.
+	int i=0;
+	//j: poscion en el vector de posiciones.
+	int j=0;
+
+
+	while ((i<n1.getDocumentos()->getCantPosiciones())){
+		//VOY AUMENTANDO EL ITERADOR DE POSICIONES HASTA LLEGAR A LA QUE NECESITO.
+		if(n1.getDocumentos()->getPosiciones()[i]==doc){
+			*frecuenciaADevolver=n1.getFrecuencias()->getPosiciones()[i];
+			return j;
+		} else {
+			//Tengo que avanzar en el vector posiciones las N posiciones que me indica la frecuencia.
+			j+=n1.getFrecuencias()->getPosiciones()[i];
+			i++;
+		}
+	}
+	return -1;
+
+}
+
+
+bool Buscador::esDocumentoCandidato(abb::Nodo* nodosEncontrados, int cantidadNodos, int documento){
+	bool esCandidato = true;
+	int i=0;
+	while (esCandidato && i<cantidadNodos){
+		abb::Nodo nodo = nodosEncontrados[i];
+		esCandidato = poseeDocumento(nodo, documento);
+		i++;
+	}
+	return esCandidato;
+}
+
+//Dice si una determinada palabra esta en un documento
+bool Buscador::poseeDocumento(abb::Nodo nodo, int documento){
+	for (int i=0; i<nodo.getDocumentos()->getCantPosiciones(); i++){
+		if(nodo.getDocumentos()->getPosiciones()[i] == documento) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 abb::Nodo Buscador::buscarTermino(string term){
 
 	abb::Nodo nodob;;
@@ -42,13 +242,14 @@ abb::Nodo Buscador::buscarTermino(string term){
 
 	if(arbolB->buscar(nodob)){
 		nodob = arbolB->buscarYdevolver(nodob);
+
 		Posiciones* documentos = new Posiciones();
 		Posiciones* posiciones = new Posiciones();
+		Posiciones* frecuencias = new Posiciones();
 
 		string* tokens;
 		//SI EL OFFSET ME DA -1 ES PORQUE SE TRATA DE LA PRIMER PALABRA, Y COMO ESA LINEA NO LA
 		//ESCRIBO EN LA TABLA, se lo tengo que avisar al seeker.
-		cout<<"OFF "<<nodob.getLineaTabla()<<endl;
 		int offset = nodob.getLineaTabla();
 		if(offset != -1){
 			char line[LONG_MAX_LINEA];
@@ -69,8 +270,6 @@ abb::Nodo Buscador::buscarTermino(string term){
 		} else {
 			longitud = 999999999;
 		}
-		cout<<"OFFS: "<<offset<<endl;
-		cout<<"LONG:  "<<longitud<<endl;
 
 		//ME POSICIONO EN LOS ARCHIVOS DE PUNTEROS Y POSICIONES.
 		fseek(this->archivoPunteros, atoi(tokens[2].c_str()), SEEK_SET);
@@ -81,8 +280,8 @@ abb::Nodo Buscador::buscarTermino(string term){
 		int i = 0;
 		int docAnt=0;
 		int sumaPosAnt=0;
-		int sumaDocAnts=0;
 		char c;
+
 		while ((i<longitud)&&(c!=EOF)) {
 			int doc;
 			c = fgetc(this->archivoPunteros);
@@ -94,10 +293,12 @@ abb::Nodo Buscador::buscarTermino(string term){
 				c = fgetc(this->archivoPunteros);
 				i++;
 			}
+
+
 			doc = atoi(strDoc.c_str());
 			documentos->agregarPosicion(doc+docAnt);
 			docAnt+=doc;
-			cout<<"DOC: "<<doc<<endl;
+
 			//AHORA NECESITO LA FRECUENCIA PARA SABER CUANTAS POSICIONES TENGO QUE PARSEAR.
 			c = fgetc(this->archivoPunteros);
 			i++;
@@ -111,11 +312,10 @@ abb::Nodo Buscador::buscarTermino(string term){
 
 
 			//GUARDO LA FRECUENCIA SIGUIENTE AL NRO DE OFFSET DE DOCUMENTO
-			cout<<"FREC:"<<strFrec<<endl;
 			frec = atoi(strFrec.c_str());
-			documentos->agregarPosicion(frec);
+			frecuencias->agregarPosicion(frec);
 
-			//Frec me dice la cantidad de posiciones que tengo que parsear de el archivo de posiciones para el documento doc.
+			//Frec me dice la cantidad de posiciones que tengo que parsear del archivo de posiciones para el documento doc.
 			int j = 0;
 			sumaPosAnt = 0;
 			while ((j<frec)){
@@ -129,15 +329,17 @@ abb::Nodo Buscador::buscarTermino(string term){
 				int pos = atoi(strPos.c_str());
 				posiciones->agregarPosicion(pos+sumaPosAnt);
 				sumaPosAnt=pos+sumaPosAnt;
-
 				j++;
 			}
 
 		}
+		nodob.setFrecuencias(frecuencias);
 		nodob.setPosiciones(posiciones);
 		nodob.setDocumentos(documentos);
-	} else
+	} else {
+		nodob.setEncontrado(false);
 		return nodob;
+	}
 	return nodob;
 }
 
@@ -155,10 +357,9 @@ string* Buscador::parsearLinea(char* line){
 	string lineaStr;
 	s0 << line;
 	s0 >> lineaStr;
-	cout<<lineaStr<<endl;
 	Posiciones pos;
 	string* tokens;
-	tokens = pars.parsearLinea(lineaStr, &pos);
+	tokens = pars.parsearLinea(lineaStr, &pos, 50);
 	return tokens;
 
 }
@@ -170,7 +371,6 @@ void Buscador::levantarArbol(){
 
 
 	int offset = 0;
-	int offsetAnterior = 0;
 
 	Parser pars;
 	Posiciones p;
@@ -178,20 +378,20 @@ void Buscador::levantarArbol(){
 	int iguales = 0;
 
 	bool esPrimerPalabra = true;
-
+	bool esSegundaPalabra = false;
+	int contador = 0;
 	while (fgets(linea, LONG_MAX_LINEA, this->tablalexico) != NULL){
-		cout<<offset<<endl;
+
 		abb::Nodo nuevoNodo;
 		p.resetCantidadPosiciones();
 		//AGARRO LA SIGUIENTE LINEA Y LA TENGO QUE COMPARAR CON LA ANTERIOR PARA SACAR LA LONGITUD DE LA PALABRA
-		string* tokens = pars.parsearLinea(linea, &p);
+		string* tokens = pars.parsearLinea(linea, &p, 50);
 
 		//Horrible implemetacion de split:
 		stringstream s0;
 		string lineaStr;
 		s0 << linea;
 		s0 >> lineaStr;
-		cout<<lineaStr<<endl;
 		int j=0;
 		for(int i=0; lineaStr[i]!=','; i++){
 			j++;
@@ -205,7 +405,7 @@ void Buscador::levantarArbol(){
 		fseek(this->archivoLexico, posicionAnterior, SEEK_SET);
 		char* buffer = (char*) malloc (sizeof(char)*longitud);
 		//LEO LA CADENA QUE NECESITO
-		size_t result = fread (buffer,1,longitud,this->archivoLexico);
+		fread (buffer,1,longitud,this->archivoLexico);
 
 		//ME ARMO LA PALABRA EN BASE AL LA ANTERIOR
 		stringstream ss;
@@ -228,11 +428,18 @@ void Buscador::levantarArbol(){
 		//indicando que cuando lo agarre sepa que la linea es (0,0,0,0).
 		if(esPrimerPalabra){
 			nuevoNodo.setLineaTabla(-1);
+			offset=0;
 			esPrimerPalabra = false;
-		} else
-			nuevoNodo.setLineaTabla(offset-lineaStr.length());
-
-//		cout<<"PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<offset-lineaStr.length()<<endl;
+			esSegundaPalabra = true;
+			cout<<"PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<nuevoNodo.getLineaTabla()<<endl;
+		} else if(contador == 2){
+			nuevoNodo.setLineaTabla(1+offset-(lineaStr.length()));
+			cout<<"SS PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<nuevoNodo.getLineaTabla()<<endl;
+			esSegundaPalabra = false;
+		} else {
+			nuevoNodo.setLineaTabla(offset-(lineaStr.length()));
+			cout<<"PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<nuevoNodo.getLineaTabla()<<endl;
+		}
 
 		//FINALMENTE LO INSERTO EN EL ARBOL B
 		arbolB->insertar(nuevoNodo);
@@ -241,9 +448,9 @@ void Buscador::levantarArbol(){
 		palabraAnterior = strPalabra;
 		iguales = atoi(lineaStr.substr(j+1, lineaStr.length()).c_str());
 		posicionAnterior = posicionSig;
-		offset=ftell(this->tablalexico);
-		offsetAnterior=offset;
 
+		offset=ftell(this->tablalexico);
+		contador++;
 		free(buffer);
 	}
 }

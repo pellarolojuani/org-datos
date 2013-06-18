@@ -11,20 +11,30 @@
 #include <string>
 #include <iostream>
 #include "../Parser/Posiciones.h"
+#include "../NombresArchivos.h"
+#include <stdio.h>
+#include <sstream>
 
 using namespace std;
-namespace abb {
+namespace match {
 
 class Match {
 public:
 	Match();
 	virtual ~Match();
 	string* getDocumentos();
+	void setOffsetsDocumentos(parser::Posiciones* offsetsDocumentos);
+	void setEncontroFrase(bool encontro);
+	bool encontroFrase();
+	void agregarMatch(int doc);
+	int getCantidadMatches();
 
 private:
 	string* documentos;
 	FILE* archivoDirectorios;
-	parser::Posiciones offsetsDocumentos;
+	parser::Posiciones* offsetsDocumentos;
+	bool fraseExiste;
+	int cantidadMatches;
 };
 
 } /* namespace abb */
