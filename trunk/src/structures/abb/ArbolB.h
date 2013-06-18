@@ -156,17 +156,16 @@ class ArbolB{
 				for (i=0; i<actual->entradasOcupadas; i++)
 				{
 					//Guardo lexico
-					string palabrastr = (string) (actual->data[i].getPalabra());
-					parser::Posiciones* documentos = (parser::Posiciones*) (actual->data[i].getOffsetsDocumentos());
-//
-//					for (int j = 0; j<documentos->getCantPosiciones(); j++) {
-//						cout<<"posicion "<<documentos->getPosiciones()[j]<<endl;
-//					}
 
-					parser::Posiciones* posicionesRel = (parser::Posiciones*) (actual->data[i].getPosiciones());
 					guardarLexicoRe(actual->ramas[i], FC, PP);
-					FC->agregarPalabra(palabrastr);
-//					PP->persistirDistancias(*documentos, *posicionesRel);
+					string palabrastr = (string) (actual->data[i].getPalabra());
+					parser::Posiciones* documentos = (parser::Posiciones*) (actual->data[i].getDocumentos());
+					parser::Posiciones* posicionesRel = (parser::Posiciones*) (actual->data[i].getPosiciones());
+					FC->agregarPalabra(palabrastr, PP->getOffsetPosiciones(), PP->getOffsetPunteros());
+					PP->persistirDistancias(documentos, posicionesRel);
+
+
+
 					//Guardo punteros
 
 
@@ -428,7 +427,7 @@ class ArbolB{
 
 	};
 
-}
+};
 
 
 

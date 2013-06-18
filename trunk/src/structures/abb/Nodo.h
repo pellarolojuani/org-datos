@@ -12,6 +12,8 @@
 #define ORDEN_NODO 40
 #endif
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 using namespace parser;
 
@@ -22,16 +24,20 @@ public:
 	virtual ~Nodo();
 
 	string getPalabra();
+
 	Posiciones* getPosiciones();
-	int getOffsetPosiciones();
-	void setOffsetPosiciones(int offsetPosiciones);
 	void setPosiciones(Posiciones* posiciones);
+
+	Posiciones* getDocumentos();
+	void setDocumentos(Posiciones* posiciones);
+
 	void setPalabra(string palabra);
 	int getFrecuencia();
 	void setFrecuencia(int frecuencia);
 
-	Posiciones* getOffsetsDocumentos();
-	void setOffsetsDocumentos(Posiciones* offsts);
+	void setLineaTabla(long int l);
+	long int getLineaTabla();
+
 
 	bool operator==(Nodo&);//compara a igual
 	bool operator<(Nodo&);//compara a menor
@@ -39,11 +45,12 @@ public:
 	bool operator=(Nodo);//asigna
 private:
 	Posiciones* posiciones;
-	Posiciones* offsetsDocumentos;
+	Posiciones* documentos;
 	int frecuencia;
 	string palabra;
 	int offsetPosiciones;
 	int offsetPunteros;
+	long int lineaTabla;
 
 };
 
