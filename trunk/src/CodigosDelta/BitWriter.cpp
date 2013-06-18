@@ -24,16 +24,19 @@ void BitWriter::crearBuffer(int size) {
 
 void BitWriter::grabarBit(bool bit) {
 	//Me aseguro que true sea 1
+	char mask = 0;
 	if (bit != 0)
-		bit = 1;
+		mask = 1;
 	//Desplazo el bit a la posicion correspondiente
 	unsigned int i;
 	for (i = 0; i< posicion%8; i++){
-		bit = bit << 1;
+		mask = mask << 1;
 	}
 	//Lo guardo en el char correspondiente y lo pongo en la cadena
-	char nuevo = (this->cadena[posicion/8]) | bit;
+	char nuevo = (this->cadena[posicion/8]) | mask;
 	this->cadena[posicion/8] = nuevo;
+	//Avanzo posicion
+	posicion++;
 }
 
 char* BitWriter::obtenerCadena() {
