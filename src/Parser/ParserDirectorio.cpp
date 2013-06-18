@@ -78,13 +78,14 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 				if(!S_ISDIR(st.st_mode)){
 					//Guardo el nombre del archivo en archivoDirectorios.
 					fputs(nombreDirectorio, this->archivoDirectorios);
+					fputs(",", this->archivoDirectorios);
 
 					//TODO variable a codificar en gamma (sería el archivo donde aparece)
 					cout<<"Indexando directorio.."<<nombreDirectorio<<offset<<endl;
 
 
 					parseFile(dirAct, offset);
-					offset+= strlen(nombreDirectorio);
+					offset+= strlen(nombreDirectorio)+1;
 
 				} else {
 					parsearDirectorioRec(ruta);
@@ -97,7 +98,7 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	abb::Nodo nod;
 	//TODO ARREGLAR ESTA GUASADA
 	//lo agregue porque al levantar el arbol misteriosamente no toma la ultima palabra. APCSC.
-	nod.setPalabra("zzzzzzzzzzzz");
+	nod.setPalabra("zzzzzzzzzzzzzzz");
 	Posiciones* pos = new parser::Posiciones();
 	pos->agregarPosicion(0);
 	nod.setDocumentos(pos);
@@ -134,7 +135,7 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	while (fgets(linea, LONG_MAX_LINEA, dirAct) != NULL){
 		posis.resetCantidadPosiciones();
 
-		string* parseo = this->parser->parsearLinea(linea,&posis);
+		string* parseo = this->parser->parsearLinea(linea,&posis, MAX_POSICIONES_LINEA);
 
 
 
