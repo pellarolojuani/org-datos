@@ -15,6 +15,7 @@
 #include "structures/abb/Nodo.h"
 #include "structures/abb/ArbolB.h"
 #include "CodigosDelta/BitReader.h"
+#include "CodigosDelta/CodigoGamma.h"
 #include "Buscador/Buscador.h"
 
 using namespace std;
@@ -23,12 +24,13 @@ void testNodo();
 void testAbb();
 void testFrontCoding();
 void testBitReader();
+void testGamma();
 abb::Nodo setNodo(int);
 
 int main() {
 
 	char* textos = "/home/lucia/new";
-	testParsearLinea();
+/*	testParsearLinea();
 //	parser::ParserDirectorio pars(textos);
 //	pars.parsearDirectorio();
 
@@ -60,7 +62,7 @@ int main() {
 		cout<<n.getDocumentos()->getPosiciones()[l]<<",";
 	}
 	cout<<endl;
-
+*/
 
 
 //	testNodo();
@@ -77,7 +79,8 @@ int main() {
 //	cout<<n.getPalabra()<<endl;
 //	cout<<"FREC:  "<<n.getFrecuencia()<<endl;
 
-	testBitReader();
+//	testBitReader();
+	testGamma();
 
 	cout << "Goodbye matrix, hello world!" << endl;
 	return 0;
@@ -272,6 +275,17 @@ void testBitReader(){
 	char prueba[] = {5, 126};
 	reader.cargarCadena(prueba, 2);
 	for (int i=0; i<16; i++){
+		cout<<"Bit : " << i << "valor : " << reader.leerBit() << endl;;
+	}
+}
+
+void testGamma(){
+	CodigoGamma gamma;
+	char* cadena;
+	int size = gamma.codificar(45, cadena);
+	BitReader reader;
+	reader.cargarCadena(cadena, (size / 8) + 1);
+	for (int i=0; i<size; i++){
 		cout<<"Bit : " << i << "valor : " << reader.leerBit() << endl;;
 	}
 }
