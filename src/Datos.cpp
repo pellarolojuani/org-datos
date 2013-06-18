@@ -25,13 +25,41 @@ abb::Nodo setNodo(int);
 
 int main() {
 
-	char* textos = "/home/lucia/nuevas";
-//	testParsearLinea();
-	parser::ParserDirectorio pars(textos);
-	pars.parsearDirectorio();
+	char* textos = "/home/lucia/new";
+	testParsearLinea();
+//	parser::ParserDirectorio pars(textos);
+//	pars.parsearDirectorio();
 
 
-//	buscador::Buscador *busq = new buscador::Buscador();
+	buscador::Buscador *busq = new buscador::Buscador();
+	abb::Nodo n = busq->buscarTermino("reginald");
+
+	cout<<"POSICIONES:   ";
+	for (int h=0; h<n.getPosiciones()->getCantPosiciones(); h++){
+		cout<<n.getPosiciones()->getPosiciones()[h]<<",";
+	}
+	cout<<endl;
+
+	cout<<"DOCS:  ";
+	for (int l=0; l<n.getDocumentos()->getCantPosiciones(); l++){
+		cout<<n.getDocumentos()->getPosiciones()[l]<<",";
+	}
+	cout<<endl;
+
+	n = busq->buscarTermino("routh");
+	cout<<"POSICIONES:   ";
+	for (int h=0; h<n.getPosiciones()->getCantPosiciones(); h++){
+		cout<<n.getPosiciones()->getPosiciones()[h]<<",";
+	}
+	cout<<endl;
+
+	cout<<"DOCS:  ";
+	for (int l=0; l<n.getDocumentos()->getCantPosiciones(); l++){
+		cout<<n.getDocumentos()->getPosiciones()[l]<<",";
+	}
+	cout<<endl;
+
+
 
 //	testNodo();
 //
@@ -61,7 +89,7 @@ abb::Nodo setNodo(int j){
 
 	nodo.setFrecuencia(45);
 	nodo.setPalabra(test[j]);
-	nodo.setOffsetPosiciones(4);
+
 	nodo.setPosiciones(&poss);
 
 	return nodo;
@@ -147,21 +175,17 @@ void testNodo(){
 
 	nodo.setFrecuencia(1);
 	nodo.setPalabra(test[1]);
-	nodo.setOffsetPosiciones(4);
 	nodo.setPosiciones(poss);
 
 	nodo2.setFrecuencia(1);
 	nodo2.setPalabra(test[2]);
-	nodo2.setOffsetPosiciones(4);
 	nodo2.setPosiciones(poss);
 
 	cout<<nodo.getPalabra()<<endl;
 	cout<<nodo.getFrecuencia()<<endl;
-	cout<<nodo.getOffsetPosiciones()<<endl;
 
 	cout<<nodo2.getPalabra()<<endl;
 	cout<<nodo2.getFrecuencia()<<endl;
-	cout<<nodo2.getOffsetPosiciones()<<endl;
 
 	cout<<"Test igual igual (son distintos)"<<endl;
 	cout<<(nodo2==nodo)<<endl;
@@ -175,7 +199,6 @@ void testNodo(){
 	nodo = nodo2;
 	cout<<nodo.getPalabra()<<endl;
 	cout<<nodo.getFrecuencia()<<endl;
-	cout<<nodo.getOffsetPosiciones()<<endl;
 
 	cout<<"Test igual igual (da que son iguales)"<<endl;
 	cout<<(nodo2==nodo)<<endl;
