@@ -28,7 +28,7 @@ namespace parser {
 class Parser {
 public:
 	Parser();
-	string* parsearLinea(string, Posiciones* posiciones);
+	string* parsearLinea(string, Posiciones* posiciones, int maxPosicionesLinea);
 	int getUltimaPosicion();
 	void resetUltimaPosicion();
 	virtual ~Parser();

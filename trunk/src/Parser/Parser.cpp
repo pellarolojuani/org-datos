@@ -19,13 +19,13 @@ Parser::Parser() {
 //Funcion que parsea una linea de entrada devolviendo un vector de strings.
 //Recibe como parámetro un elemento posiciones, donde se va a guardar la posicion
 //relativa de cada string (se mapean uno a uno)
-string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales){
+string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales, int maxPosicionesLinea){
 
 	//esta linea es cualquiera, pero después veremos qué va pasando
 	//con las palabras que se agreguen al parser, o sea, capaz que hay
 	//que meter la palabra parseada en un nodo de arbol B, o un arbol binario
 	//o algo así.
-	string* arrayPalabras=new string[MAX_POSICIONES_LINEA];
+	string* arrayPalabras=new string[maxPosicionesLinea];
 
 	//Proceso caracter a caracter y voy formando palabras.
 	string palabra = "";
