@@ -14,6 +14,7 @@
 #include "FrontCoding/Frontcoding.h"
 #include "structures/abb/Nodo.h"
 #include "structures/abb/ArbolB.h"
+#include "CodigosDelta/BitReader.h"
 #include "Buscador/Buscador.h"
 
 using namespace std;
@@ -21,6 +22,7 @@ void testParsearLinea();
 void testNodo();
 void testAbb();
 void testFrontCoding();
+void testBitReader();
 abb::Nodo setNodo(int);
 
 int main() {
@@ -74,6 +76,8 @@ int main() {
 //
 //	cout<<n.getPalabra()<<endl;
 //	cout<<"FREC:  "<<n.getFrecuencia()<<endl;
+
+	testBitReader();
 
 	cout << "Goodbye matrix, hello world!" << endl;
 	return 0;
@@ -263,4 +267,11 @@ void testFrontCoding(){
 
 }
 
-
+void testBitReader(){
+	BitReader reader;
+	char prueba[] = {5, 126};
+	reader.cargarCadena(prueba, 2);
+	for (int i=0; i<16; i++){
+		cout<<"Bit : " << i << "valor : " << reader.leerBit() << endl;;
+	}
+}
