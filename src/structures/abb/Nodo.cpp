@@ -10,7 +10,12 @@
 namespace abb {
 
 Nodo::Nodo() {
-	// TODO Auto-generated constructor stub
+	documentos = NULL;
+	posiciones = NULL;
+	frecuencia = 0;
+	offsetPosiciones = 0;
+	offsetPunteros = 0;
+	lineaTabla=0;
 
 }
 
@@ -18,12 +23,20 @@ string Nodo::getPalabra(){
 	return this->palabra;
 }
 
-Posiciones* Nodo::getOffsetsDocumentos(){
-	return this->offsetsDocumentos;
+Posiciones* Nodo::getDocumentos(){
+	return this->documentos;
 }
 
-void Nodo::setOffsetsDocumentos(Posiciones* offsts){
-	this->offsetsDocumentos = offsts;
+void Nodo::setDocumentos(Posiciones* posiciones){
+	this->documentos = posiciones;
+}
+
+void Nodo::setLineaTabla(long int l){
+	this->lineaTabla = l;
+}
+
+long int Nodo::getLineaTabla(){
+	return lineaTabla;
 }
 
 void Nodo::setPalabra(string palabra){
@@ -45,12 +58,6 @@ void Nodo::setFrecuencia(int frecuencia){
 	this->frecuencia = frecuencia;
 }
 
-int Nodo::getOffsetPosiciones(){
-	return offsetPosiciones;
-}
-void Nodo::setOffsetPosiciones(int offsetPosiciones){
-	this->offsetPosiciones = offsetPosiciones;
-}
 
 bool Nodo::operator==(Nodo& nuevoFF)
 {
@@ -73,11 +80,16 @@ bool Nodo::operator=(Nodo nuevoFF)
 {
 	this->frecuencia = nuevoFF.getFrecuencia();
 	this->posiciones = nuevoFF.getPosiciones();
+	this->documentos = nuevoFF.getDocumentos();
+	this->lineaTabla = nuevoFF.getLineaTabla();
 	this->palabra = nuevoFF.getPalabra();
+
+	return true;
 }
 
 Nodo::~Nodo() {
-	// TODO Auto-generated destructor stub
+//	free(posiciones);
+//	free(documentos);
 }
 
 } /* namespace abb */
