@@ -43,8 +43,14 @@ match::Match* Buscador::buscarFrase(string frase){
 	parser::Parser pars;
 	parser::Posiciones posiciones;
 	string* palabras = pars.parsearLinea(frase, &posiciones, LONG_MAX_STRING_BUSQUEDA);
-
 	match::Match* match = new match::Match();
+
+	//Si viene un usuario kaker y pone solo delimitadores, es un caso especial:
+	if(posiciones.getCantPosiciones()==0){
+		match->setEncontroFrase(false);
+		match->setOffsetsDocumentos(new Posiciones());
+		return match;
+	}
 
 	abb::Nodo nodosEncontrados[LONG_MAX_STRING_BUSQUEDA];
 	bool estanTodas = estanTodasLasPalabras(nodosEncontrados, palabras, posiciones.getCantPosiciones());
@@ -75,7 +81,6 @@ match::Match* Buscador::buscarFrase(string frase){
 	Posiciones* matchFrases = new Posiciones();
 	//Por cada documento matcheado me tengo que fijar si el orden que siguen las palabras de la frase es el correcto.
 	for (int i=0; i<matchDocumentos.getCantPosiciones(); i++){
-		cout<<"Comprobando documentos..."<<endl;
 		bool documentoMatch = true;
 		int documento = matchDocumentos.getPosiciones()[i];
 		//Caso especial: si es una sola palabra la que estoy buscando, todos los documentos son match.
@@ -84,21 +89,21 @@ match::Match* Buscador::buscarFrase(string frase){
 		} else {
 
 			documentoMatch = esFrase(nodosEncontrados,posiciones.getCantPosiciones(),documento);
-
 			if(documentoMatch){
 				matchFrases->agregarPosicion(matchDocumentos.getPosiciones()[i]);
 			}
 		}
 	}
 
-	if(matchFrases->getCantPosiciones() == 0){
+	if(matchFrases->getCantPosiciones() == 0)
 		match->setEncontroFrase(false);
-	} else
-		match->setOffsetsDocumentos(matchFrases);
+	match->setOffsetsDocumentos(matchFrases);
+
 
 	for(int i=0; i<posiciones.getCantPosiciones();i++){
 		nodosEncontrados[i].borrar();
 	}
+
 	return match;
 
 }
@@ -145,10 +150,16 @@ bool Buscador::esFrase(abb::Nodo *nodosEncontrados,int cantidadPalabras, int doc
 			contador++;
 			//PARA CADA UNA DE LAS PALABRAS CALCULO LA DISTANCIA DE CADA UNA DE SUS POSICIONES A LA PRIMER PALABRA.
 			bool candidato=false;
+
 			int h=0;
 			while( !candidato && (h < palabraPosiciones.getCantPosiciones())){
 				//Calculo la distancia que tiene que ser coherente con el contador
 				int posh = palabraPosiciones.getPosiciones()[h];
+
+				//Si la posicion actual de la palabra siguiente se pasa de la que deberia ser, al estar ordenadas, deja de ser
+				//candidata a armar la frase.
+				if(posh>contador)
+					break;
 
 				//si alguna coincide con el contador, esta a la distancia que corresponde
 				if(contador==posh){
@@ -478,7 +489,6 @@ void Buscador::levantarArbol(){
 		delete(buffer);
 	}
 }
-
 
 
 Buscador::~Buscador() {
