@@ -139,8 +139,6 @@ class ArbolB{
                 {
                     emitirRecursivo(actual->ramas[i]);
                     cout <<actual->data[i].getPalabra();
-                    cout << "      frec: ";
-                    cout << actual->data[i].getFrecuencia();
                     cout << endl;
 
                 }

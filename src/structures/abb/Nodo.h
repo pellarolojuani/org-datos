@@ -44,6 +44,8 @@ public:
 	bool fueEncontrado();
 	void setEncontrado(bool encontrado);
 
+	void borrar();
+
 
 
 	bool operator==(Nodo&);//compara a igual

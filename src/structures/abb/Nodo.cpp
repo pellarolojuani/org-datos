@@ -106,9 +106,14 @@ bool Nodo::operator=(Nodo nuevoFF)
 	return true;
 }
 
+void Nodo::borrar(){
+	delete(posiciones);
+	delete(documentos);
+	delete(frecuencias);
+}
+
 Nodo::~Nodo() {
-//	free(posiciones);
-//	free(documentos);
+
 }
 
 } /* namespace abb */
