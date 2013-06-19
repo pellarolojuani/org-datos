@@ -14,7 +14,7 @@
 #include "../NombresArchivos.h"
 #include <stdio.h>
 #include <sstream>
-
+#include <stdlib.h>
 using namespace std;
 namespace match {
 
@@ -28,6 +28,7 @@ public:
 	bool encontroFrase();
 	void agregarMatch(int doc);
 	int getCantidadMatches();
+	void borrar();
 
 private:
 	string* documentos;

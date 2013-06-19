@@ -34,7 +34,6 @@ Buscador::Buscador() {
 
 	this->arbolB = new abb::ArbolB<abb::Nodo, ORDEN_NODO>();
 	this->levantarArbol();
-	arbolB->emitir();
 
 }
 
@@ -48,34 +47,12 @@ match::Match* Buscador::buscarFrase(string frase){
 	match::Match* match = new match::Match();
 
 	abb::Nodo nodosEncontrados[LONG_MAX_STRING_BUSQUEDA];
-
 	bool estanTodas = estanTodasLasPalabras(nodosEncontrados, palabras, posiciones.getCantPosiciones());
 	if(!estanTodas) {
 		match->setEncontroFrase(false);
 		match->setOffsetsDocumentos(new Posiciones());
 		return match;
 	}
-
-	//imprimo las posiciones de todos a ver que onda
-	for (int i=0; i<posiciones.getCantPosiciones(); i++) {
-		abb::Nodo nodo = nodosEncontrados[i];
-		cout<<"Posiciones:  "<<nodo.getPalabra()<<endl;
-		for (int i=0; i<nodo.getPosiciones()->getCantPosiciones(); i++){
-			cout<<nodo.getPosiciones()->getPosiciones()[i]<<"   ";
-		}
-		cout<<endl;
-		cout<<"DOCUMENTOS:  "<<endl;
-		for (int i=0; i<nodo.getDocumentos()->getCantPosiciones(); i++){
-			cout<<nodo.getDocumentos()->getPosiciones()[i]<<"   ";
-		}
-		cout<<endl;
-		cout<<"Frecuencias:  "<<endl;
-		for (int i=0; i<nodo.getFrecuencias()->getCantPosiciones(); i++){
-			cout<<nodo.getFrecuencias()->getPosiciones()[i]<<"   ";
-		}
-		cout<<endl;
-	}
-
 
 	abb::Nodo menor = nodosEncontrados[0];
 	//Agarro el que tiene menor cantidad de documentos:
@@ -95,39 +72,33 @@ match::Match* Buscador::buscarFrase(string frase){
 		}
 
 	}
-
 	Posiciones* matchFrases = new Posiciones();
-
-	cout<<"matches documentos:  "<<endl;
-	for (int i=0; i<matchDocumentos.getCantPosiciones(); i++){
-		cout<<matchDocumentos.getPosiciones()[i]<<"   ";
-	}
-	cout<<endl;
-
 	//Por cada documento matcheado me tengo que fijar si el orden que siguen las palabras de la frase es el correcto.
 	for (int i=0; i<matchDocumentos.getCantPosiciones(); i++){
+		cout<<"Comprobando documentos..."<<endl;
 		bool documentoMatch = true;
 		int documento = matchDocumentos.getPosiciones()[i];
 		//Caso especial: si es una sola palabra la que estoy buscando, todos los documentos son match.
 		if(posiciones.getCantPosiciones() == 1) {
 			matchFrases->agregarPosicion((matchDocumentos.getPosiciones()[i]));
-		}
+		} else {
 
-		int j=0;
-		while(j<(posiciones.getCantPosiciones()-1) && documentoMatch){
-			documentoMatch = esPalabraSiguiente(nodosEncontrados[j], nodosEncontrados[j+1], documento);
-			cout<<documentoMatch<<endl;
-			j++;
-		}
-		if(documentoMatch){
-			matchFrases->agregarPosicion(matchDocumentos.getPosiciones()[i]);
-			cout<<"DOC MATCH: "<<matchDocumentos.getPosiciones()[i];
-			cout<<"LA ENCONTRO"<<endl;
+			documentoMatch = esFrase(nodosEncontrados,posiciones.getCantPosiciones(),documento);
 
-
+			if(documentoMatch){
+				matchFrases->agregarPosicion(matchDocumentos.getPosiciones()[i]);
+			}
 		}
 	}
-	match->setOffsetsDocumentos(matchFrases);
+
+	if(matchFrases->getCantPosiciones() == 0){
+		match->setEncontroFrase(false);
+	} else
+		match->setOffsetsDocumentos(matchFrases);
+
+	for(int i=0; i<posiciones.getCantPosiciones();i++){
+		nodosEncontrados[i].borrar();
+	}
 	return match;
 
 }
@@ -157,7 +128,64 @@ bool Buscador::estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabr
 
 }
 
-bool Buscador::esPalabraSiguiente(abb::Nodo n1, abb::Nodo n2, int doc){
+bool Buscador::esFrase(abb::Nodo *nodosEncontrados,int cantidadPalabras, int doc){
+	Posiciones primerPalabraPosiciones = getPosiciones(nodosEncontrados[0], doc);
+	int contador;
+	//Optimizacion posible: si una palabra es una "stopword" se puede empezar a buscar desde la siguiente y al
+	//final comparar si es frase con la stop.
+	for(int j=0; j<primerPalabraPosiciones.getCantPosiciones(); j++){
+
+		contador = primerPalabraPosiciones.getPosiciones()[j];
+		bool esFrase = true;
+
+		for(int i=1; i<cantidadPalabras; i++){
+
+			Posiciones palabraPosiciones = getPosiciones(nodosEncontrados[i], doc);
+			//CONTADOR ES LA DISTANCIA QUE DEBERIA TENER A LA PRIMER PALABRA.
+			contador++;
+			//PARA CADA UNA DE LAS PALABRAS CALCULO LA DISTANCIA DE CADA UNA DE SUS POSICIONES A LA PRIMER PALABRA.
+			bool candidato=false;
+			int h=0;
+			while( !candidato && (h < palabraPosiciones.getCantPosiciones())){
+				//Calculo la distancia que tiene que ser coherente con el contador
+				int posh = palabraPosiciones.getPosiciones()[h];
+
+				//si alguna coincide con el contador, esta a la distancia que corresponde
+				if(contador==posh){
+					candidato=true;
+				}
+				h++;
+			}
+			//Si alguna me llega con candidato en false, no hay frase y se corta el ciclo
+			if(!candidato){
+				esFrase = false;
+				break;
+			}
+		}
+		if(esFrase)
+			return true;
+	}
+
+	return false;
+}
+
+
+
+
+//Devuelve todas las posiciones de una palabra en un documento
+Posiciones Buscador::getPosiciones(abb::Nodo n, int doc){
+	int frec;
+	int pos = getPosPalabraEnVectorPosiciones(n,doc,&frec);
+	Posiciones posis;
+	for(int i=0; i<frec; i++){
+		posis.agregarPosicion(n.getPosiciones()->getPosiciones()[pos]);
+		pos++;
+	}
+	return posis;
+}
+
+
+bool Buscador::esPalabraSiguiente(abb::Nodo n1, abb::Nodo n2, int doc, int* ultimaPos){
 	int frec1 = 0;
 	int frec2 = 0;
 
@@ -166,16 +194,13 @@ bool Buscador::esPalabraSiguiente(abb::Nodo n1, abb::Nodo n2, int doc){
 	int pos2 = this->getPosPalabraEnVectorPosiciones(n2,doc,&frec2);
 	int pos2Original = pos2;
 
-	cout<<"palabras : "<<n1.getPalabra()<<endl;
-	cout<<"palabras : "<<n2.getPalabra()<<endl;
 
 	for(int i=0; i<frec1; i++){
 		for(int j=0; j<frec2; j++){
 			int ubicacionPalabra1 = n1.getPosiciones()->getPosiciones()[pos1];
-			cout<<ubicacionPalabra1<<endl;
 			int ubicacionPalabra2menosUno = n2.getPosiciones()->getPosiciones()[pos2]-1;
-			cout<<ubicacionPalabra1<<endl;
 			bool esSiguiente =  ((ubicacionPalabra1) == (ubicacionPalabra2menosUno));
+			*ultimaPos=n2.getPosiciones()->getPosiciones()[pos2];
 			if(esSiguiente){
 				return true;
 			}
@@ -430,16 +455,15 @@ void Buscador::levantarArbol(){
 			nuevoNodo.setLineaTabla(-1);
 			offset=0;
 			esPrimerPalabra = false;
-			esSegundaPalabra = true;
-			cout<<"PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<nuevoNodo.getLineaTabla()<<endl;
-		} else if(contador == 2){
+		} else if(contador == 1){
+			nuevoNodo.setLineaTabla(offset-(lineaStr.length())-1);
+		}
+		else if(contador == 2){
 			nuevoNodo.setLineaTabla(1+offset-(lineaStr.length()));
-			cout<<"SS PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<nuevoNodo.getLineaTabla()<<endl;
-			esSegundaPalabra = false;
 		} else {
 			nuevoNodo.setLineaTabla(offset-(lineaStr.length()));
-			cout<<"PAL:   "<<strPalabra<<"   ||     "<<"OFFSET  "<<nuevoNodo.getLineaTabla()<<endl;
 		}
+
 
 		//FINALMENTE LO INSERTO EN EL ARBOL B
 		arbolB->insertar(nuevoNodo);
@@ -451,7 +475,7 @@ void Buscador::levantarArbol(){
 
 		offset=ftell(this->tablalexico);
 		contador++;
-		free(buffer);
+		delete(buffer);
 	}
 }
 
