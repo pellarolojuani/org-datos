@@ -28,34 +28,41 @@ void testGamma();
 
 int main(int argc, char* argv[]) {
 
-//	//Parametro -i arma el indice.
-//  	if((strcmp(argv[1],"-i")==0)){
-//  		char* textos = argv[2];
-//  		parser::ParserDirectorio pars(textos);
-//  		pars.parsearDirectorio();
-//  	}
-//
-//	if((strcmp(argv[1],"-r")==0)){
-//		buscador::Buscador *busq = new buscador::Buscador();
-//		string b = argv[2];
-//		match::Match* match = busq->buscarFrase(b);
-//		string* docs = match->getDocumentos();
-//		for (int i=0; i<match->getCantidadMatches(); i++){
-//			cout<<docs[i]<<endl;
-//		}
-//	}
+	//Parametro -i arma el indice.
+  	if((strcmp(argv[1],"-i")==0)){
+  		char* textos = argv[2];
+  		parser::ParserDirectorio pars(textos);
+  		pars.parsearDirectorio();
+  	//Parametro -r busca las frases
+  	}else if((strcmp(argv[1],"-r")==0)){
+		buscador::Buscador *busq = new buscador::Buscador();
+		string b = argv[2];
+		match::Match* match = busq->buscarFrase(b);
+		string* docs = match->getDocumentos();
+		for (int i=0; i<match->getCantidadMatches(); i++){
+			cout<<docs[i]<<endl;
+		}
 
-//	char* textos = "/home/lucia/pruebas";
+		if(match->getCantidadMatches() == 0){
+			cout<<"Ningún documento contiene la frase buscada."<<endl;
+		}
+	} else
+		cout<<"USAGE: ./Datos -<i,r> <directorio,frase>"<<endl;
+
+//	char* textos = "/home/lucia/miau";
 //	parser::ParserDirectorio pars(textos);
 //	pars.parsearDirectorio();
 
-	buscador::Buscador *busq = new buscador::Buscador();
-	string b = "I do! her heart is on our side. She will believe you, easily!";
-	match::Match* match = busq->buscarFrase(b);
-	string* docs = match->getDocumentos();
-	for (int i=0; i<match->getCantidadMatches(); i++){
-		cout<<docs[i]<<endl;
-	}
+//	buscador::Buscador busq;;
+//	string b = "into my bosom";
+//	match::Match* match = busq.buscarFrase(b);
+//	string* docs = match->getDocumentos();
+//	for (int i=0; i<match->getCantidadMatches(); i++){
+//		cout<<docs[i]<<endl;
+//	}
+
+
+
 
 
 //	testBitReader();
@@ -63,7 +70,8 @@ int main(int argc, char* argv[]) {
 //	testGamma();
 
 	//Esta linea es la cabala oficial.
-	cout << "Goodbye matrix, hello world!" << endl;
+//	cout << "Goodbye matrix, hello world!" << endl;
+//	busq.borrar();
 	return 0;
 }
 
