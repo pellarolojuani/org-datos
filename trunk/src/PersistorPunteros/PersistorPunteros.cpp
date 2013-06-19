@@ -27,20 +27,6 @@ int PersistorPunteros::getOffsetPosiciones(){
 
 void PersistorPunteros::persistirDistancias(parser::Posiciones* docs, parser::Posiciones* posRelativas){
 
-	cout<<"DOCUMENTOS:   ";
-	for (int h=0; h<docs->getCantPosiciones(); h++){
-		cout<<docs->getPosiciones()[h]<<",";
-	}
-	cout<<endl;
-
-	cout<<"    POSICIONES:  ";
-	for (int l=0; l<posRelativas->getCantPosiciones(); l++){
-		cout<<posRelativas->getPosiciones()[l]<<",";
-	}
-	cout<<endl;
-
-
-
 	int i=0;
 	int j=0;
 
