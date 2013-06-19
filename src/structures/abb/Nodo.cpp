@@ -113,7 +113,6 @@ void Nodo::borrar(){
 }
 
 Nodo::~Nodo() {
-
 }
 
 } /* namespace abb */

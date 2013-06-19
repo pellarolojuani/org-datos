@@ -119,6 +119,14 @@ class ArbolB{
         emitirRecursivo(raiz);
     };
 
+    void borrar()
+	{
+		borrarRec(raiz);
+	};
+
+
+
+
 
     //FUNCION TOTALMENTE DESUBICADA ACA
     void guardarLexico(frontcoding::Frontcoding FC, punteros::PersistorPunteros PP){
@@ -129,6 +137,9 @@ class ArbolB{
 
 
     private:
+
+
+
         B_nodo<T,orden> *raiz;
 
         void emitirRecursivo(B_nodo<T,orden>* actual)
@@ -145,6 +156,19 @@ class ArbolB{
                 emitirRecursivo(actual->ramas[actual->entradasOcupadas]);
             }
         }
+
+        void borrarRec(B_nodo<T,orden>* actual)
+		{
+        	int i;
+			if (actual){
+				for (i=0; i<actual->entradasOcupadas; i++)
+				{
+					borrarRec(actual->ramas[i]);
+				}
+				borrarRec(actual->ramas[actual->entradasOcupadas]);
+			}
+//			delete actual;
+		}
 
         void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC, punteros::PersistorPunteros *PP)
 		{
@@ -420,8 +444,6 @@ class ArbolB{
 			else
 				return false;
 		}
-
-
 
 	};
 
