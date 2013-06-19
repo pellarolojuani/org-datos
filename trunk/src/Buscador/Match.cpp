@@ -37,7 +37,6 @@ string* Match::getDocumentos(){
 			c=fgetc(this->archivoDirectorios);
 		}
 		docNames[i] =  docName;
-		cout<<docName<<endl;
 	}
 	return docNames;
 
@@ -61,6 +60,10 @@ bool Match::encontroFrase(){
 
 void Match::setEncontroFrase(bool encontro){
 	this->fraseExiste = encontro;
+}
+
+void Match::borrar(){
+	delete(this->offsetsDocumentos);
 }
 
 Match::~Match() {
