@@ -105,8 +105,8 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	nod.setPosiciones(pos);
 	arbolito->insertar(nod);
 
+	this->almacenarLexico();
 
-	arbolito->emitir();
 
 	this->almacenarLexico();
 

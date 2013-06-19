@@ -27,7 +27,6 @@ public:
 
 
 
-
 	virtual ~Buscador();
 private:
 	FILE* archivoLexico;
