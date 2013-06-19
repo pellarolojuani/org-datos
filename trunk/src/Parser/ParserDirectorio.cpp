@@ -183,7 +183,7 @@ bool ParserDirectorio::isCurrOrParentDir(const string& name)
 
 ParserDirectorio::~ParserDirectorio() {
 
-	free(parser);
+	delete(parser);
 
 }
 
