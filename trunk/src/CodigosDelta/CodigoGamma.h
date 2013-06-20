@@ -15,7 +15,11 @@ public:
 	 * Devuelve el largo en bits
 	 */
 	int codificar(unsigned int numero, char*& destino);
+	/* codifica varios */
+	int codificar(unsigned int* numero, unsigned int cantidad, char*& destino);
 	int decodificar(char* cadena);
+	/* decodifica varios */
+	int* decodificar(char* cadena, int cantidad);
 	virtual ~CodigoGamma();
 };
 
