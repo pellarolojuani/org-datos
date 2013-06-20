@@ -20,6 +20,7 @@ public:
 	static const char* archivoLexico;
 	static const char* archivoTablaLexico;
 	static const char* archivoPosicionesRelativas;
+	static const char* archivoGamma;
 	virtual ~NombresArchivos();
 };
 

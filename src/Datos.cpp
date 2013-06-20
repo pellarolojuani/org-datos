@@ -7,7 +7,9 @@
 //============================================================================
 
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
+#include <vector>
 #include "Parser/Parser.h"
 #include "Parser/ParserDirectorio.h"
 #include "Parser/Posiciones.h"
@@ -15,7 +17,7 @@
 #include "structures/abb/Nodo.h"
 #include "structures/abb/ArbolB.h"
 #include "CodigosDelta/BitReader.h"
-#include "CodigosDelta/CodigoGamma.h"
+#include "CodigosDelta/ArchivoGamma.h"
 #include "Buscador/Buscador.h"
 
 #ifndef LONG_MAX_STRING_BUSQUEDA
@@ -23,12 +25,11 @@
 #endif
 
 using namespace std;
-void testBitReader();
-void testGamma();
+void testArchivoGamma();
 
 int main(int argc, char* argv[]) {
 
-	//Parametro -i arma el indice.
+/*	//Parametro -i arma el indice.
   	if((strcmp(argv[1],"-i")==0)){
   		char* textos = argv[2];
   		parser::ParserDirectorio pars(textos);
@@ -47,7 +48,7 @@ int main(int argc, char* argv[]) {
 			cout<<"Ningún documento contiene la frase buscada."<<endl;
 		}
 	} else
-		cout<<"USAGE: ./Datos -<i,r> <directorio,frase>"<<endl;
+		cout<<"USAGE: ./Datos -<i,r> <directorio,frase>"<<endl;*/
 
 //	char* textos = "/home/lucia/miau";
 //	parser::ParserDirectorio pars(textos);
@@ -60,43 +61,22 @@ int main(int argc, char* argv[]) {
 //	for (int i=0; i<match->getCantidadMatches(); i++){
 //		cout<<docs[i]<<endl;
 //	}
-
-
-
-
-
-//	testBitReader();
-//	testBitReader();
-//	testGamma();
-
+  	//testArchivoGamma();
 	//Esta linea es la cabala oficial.
-//	cout << "Goodbye matrix, hello world!" << endl;
-//	busq.borrar();
+	cout << "Goodbye matrix, hello world!" << endl;
 	return 0;
 }
 
-
-
-
-
-void testBitReader(){
-	BitReader reader;
-	char prueba[] = {5, 126};
-	reader.cargarCadena(prueba, 2);
-	for (int i=0; i<16; i++){
-		cout<<"Bit : " << i << "valor : " << reader.leerBit() << endl;;
-	}
-}
-
-
-
-void testGamma(){
-	CodigoGamma gamma;
-	char* cadena;
-	int size = gamma.codificar(45, cadena);
-	BitReader reader;
-	reader.cargarCadena(cadena, (size / 8) + 1);
-	for (int i=0; i<size; i++){
-		cout<<"Bit : " << i << "valor : " << reader.leerBit() << endl;;
-	}
+void testArchivoGamma(){
+	std::fstream file(constantes::NombresArchivos::archivoGamma, std::fstream::in | std::fstream::binary);
+	ArchivoGamma gammaFile;
+	unsigned int numeros[] = {1, 40, 20, 10};
+	vector<unsigned int> vec(numeros, numeros + 4);
+	vector<unsigned int> vec2;
+	for (int i = 0 ; i< 4; i++)
+		cout << vec[i] << endl;
+	//gammaFile.guardarVector(vec);
+	vec2 = gammaFile.levantarVector(0);
+	for (int i = 0 ; i< 4; i++)
+			cout << vec2[i] << endl;
 }
