@@ -29,11 +29,11 @@ void BitWriter::grabarBit(bool bit) {
 		mask = 1;
 	//Desplazo el bit a la posicion correspondiente
 	unsigned int i;
-	for (i = 0; i< posicion%8; i++){
+	for (i = 0; i< (posicion & 7); i++){ //&7 es como hacer %8
 		mask = mask << 1;
 	}
 	//Lo guardo en el char correspondiente y lo pongo en la cadena
-	char nuevo = (this->cadena[posicion/8]) | mask;
+	char nuevo = (this->cadena[posicion >> 3]) | mask; // >> 3 es como hacer /8
 	this->cadena[posicion/8] = nuevo;
 	//Avanzo posicion
 	posicion++;

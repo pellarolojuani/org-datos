@@ -16,6 +16,8 @@ class ArchivoGamma {
 public:
 	ArchivoGamma();
 	virtual ~ArchivoGamma();
+	void abrir();
+	void cerrar();
 	/**
 	 * Parametros: vector a persistir
 	 * Devuelve: posicion donde empieza
