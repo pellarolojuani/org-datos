@@ -11,12 +11,20 @@
 
 
 ArchivoGamma::ArchivoGamma() {
-	this->file.open(constantes::NombresArchivos::archivoGamma, std::fstream::in | std::fstream::binary);
+	this->abrir();
 }
 
 ArchivoGamma::~ArchivoGamma() {
+	this->cerrar();
+}
+
+void ArchivoGamma::abrir() {
+	this->file.open(constantes::NombresArchivos::archivoGamma, std::fstream::in | std::fstream::out | std::fstream::binary);
+}
+
+void ArchivoGamma::cerrar() {
 	if (file.is_open())
-		file.close();
+			file.close();
 }
 
 void ArchivoGamma::setPosicion(long posicion){
@@ -47,10 +55,6 @@ std::vector<unsigned int> ArchivoGamma::levantarVector(int posicion) {
 	delete[] buf;
 	buf = new char[size * 8];
 	file.read(buf, size * 8);
-	buf[0] = 0b00100100;
-	buf[1] = 0b00101000;
-	buf[2] = 0b10100000;
-	buf[3] = 0b10100000;
 	int* intArray = this->gamma.decodificar(buf, size);
 	//Y los agrego al vector
 	result = std::vector<unsigned int>(intArray + 1, intArray + size +1);

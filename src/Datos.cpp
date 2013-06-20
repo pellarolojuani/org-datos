@@ -61,21 +61,20 @@ int main(int argc, char* argv[]) {
 //	for (int i=0; i<match->getCantidadMatches(); i++){
 //		cout<<docs[i]<<endl;
 //	}
-  	//testArchivoGamma();
+  	testArchivoGamma();
 	//Esta linea es la cabala oficial.
 	cout << "Goodbye matrix, hello world!" << endl;
 	return 0;
 }
 
 void testArchivoGamma(){
-	std::fstream file(constantes::NombresArchivos::archivoGamma, std::fstream::in | std::fstream::binary);
 	ArchivoGamma gammaFile;
-	unsigned int numeros[] = {1, 40, 20, 10};
+	unsigned int numeros[] = {1120, 123440, 212312350, 112330};
 	vector<unsigned int> vec(numeros, numeros + 4);
 	vector<unsigned int> vec2;
-	for (int i = 0 ; i< 4; i++)
-		cout << vec[i] << endl;
-	//gammaFile.guardarVector(vec);
+	gammaFile.guardarVector(vec);
+	gammaFile.cerrar();
+	gammaFile.abrir();
 	vec2 = gammaFile.levantarVector(0);
 	for (int i = 0 ; i< 4; i++)
 			cout << vec2[i] << endl;

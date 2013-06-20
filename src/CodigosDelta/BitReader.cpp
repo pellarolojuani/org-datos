@@ -22,8 +22,8 @@ void BitReader::cargarCadena(char* cadena, int largo) {
 
 bool BitReader::leerBit() {
 	bool result = 0;
-	if(offset < largo * 8){
-		char aux = cadena[offset/8];
+	if(offset < (largo << 3)){ //<< es como hacer *8
+		char aux = cadena[offset >> 3]; // >> 3 es como hacer /8
 		//And entre bits de la mascara y el char
 		if ((aux & mask) != 0){
 			result = 1;
