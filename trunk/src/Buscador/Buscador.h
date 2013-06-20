@@ -14,6 +14,7 @@
 #include "../NombresArchivos.h"
 #include "Match.h"
 #include <iostream>
+#include <set>
 
 namespace buscador {
 
@@ -40,15 +41,14 @@ private:
 	bool esDocumentoCandidato(abb::Nodo* nodosEncontrados, int cantidadNodos, int documento);
 
 	bool esFrase(abb::Nodo* ns, int cantidad, int doc);
-	bool esPalabraSiguiente(abb::Nodo n1, abb::Nodo n2, int doc, int* ultimaPos);
 	bool estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras);
 
 	int getPosPalabraEnVectorPosiciones(abb::Nodo n1, int doc, int* frecuenciaADevolver);
 
-	Posiciones getPosiciones(abb::Nodo n, int doc);
+	std::set<int>* getPosiciones(abb::Nodo n, int doc);
 
-	parser::Posiciones getUbicacionFrases(parser::Posiciones pos1, parser::Posiciones pos2);
 
+	std::set<string> armarSetParaBusquedaFrases(abb::Nodo* nodosEncontrados, int cant, int doc);
 
 	abb::ArbolB<abb::Nodo, ORDEN_NODO>* arbolB;
 

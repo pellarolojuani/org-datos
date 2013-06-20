@@ -28,7 +28,6 @@ namespace buscador {
 Buscador::Buscador() {
 	this->archivoLexico = fopen(constantes::NombresArchivos::archivoLexico,"rb");
 	this->tablalexico = fopen(constantes::NombresArchivos::archivoTablaLexico,"rb");
-
 	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros,"rb");
 	this->archivoPosiciones = fopen(constantes::NombresArchivos::archivoPosicionesRelativas,"rb");
 
@@ -108,6 +107,24 @@ match::Match* Buscador::buscarFrase(string frase){
 
 }
 
+std::set<string> Buscador::armarSetParaBusquedaFrases(abb::Nodo* nodosEncontrados, int cant, int documentoBuscado){
+	std::set<string> set;
+	std::set<int>* posiciones;
+	std::set<int>::iterator it;
+	for(int i = 0; i<cant; i++){
+		posiciones = getPosiciones(nodosEncontrados[i], documentoBuscado);
+		for (it=posiciones->begin(); it!=posiciones->end(); ++it){
+			string cadena;
+			stringstream ss;
+			ss<<nodosEncontrados[i].getPalabra()<<"-"<<documentoBuscado<<"-"<<*it;
+			ss>>cadena;
+			set.insert(cadena);
+			cout<<cadena<<endl;
+		}
+	}
+	return set;
+}
+
 bool Buscador::estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras){
 	//BUSCO CADA FRASE EN EL ARBOL SI UNA NO ESTA ZARAZA
 	bool estanTodas = true;
@@ -124,104 +141,66 @@ bool Buscador::estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabr
 			abb::Nodo n;
 			n=buscarTermino(palabras[i]);
 			nodosEncontrados[i] = n;
-
 		}
-
 	}
 	return true;
 
 
 }
 
-bool Buscador::esFrase(abb::Nodo *nodosEncontrados,int cantidadPalabras, int doc){
-	Posiciones primerPalabraPosiciones = getPosiciones(nodosEncontrados[0], doc);
-	int contador;
-	//Optimizacion posible: si una palabra es una "stopword" se puede empezar a buscar desde la siguiente y al
-	//final comparar si es frase con la stop.
-	for(int j=0; j<primerPalabraPosiciones.getCantPosiciones(); j++){
+bool Buscador::esFrase(abb::Nodo *nodosEncontrados, int cantidad, int doc){
+	abb::Nodo nodosNoPrimeros[LONG_MAX_STRING_BUSQUEDA-1];
+	for(int i=1; i <cantidad; i++){
+		nodosNoPrimeros[i-1]=nodosEncontrados[i];
+	}
+	std::set<string> set = armarSetParaBusquedaFrases(nodosNoPrimeros, cantidad-1, doc);
 
-		contador = primerPalabraPosiciones.getPosiciones()[j];
-		bool esFrase = true;
 
-		for(int i=1; i<cantidadPalabras; i++){
+	std::set<int>* primerPalabraPosiciones = getPosiciones(nodosEncontrados[0], doc);
+	std::set<int>::iterator it;
+	bool esFrase = false;
 
-			Posiciones palabraPosiciones = getPosiciones(nodosEncontrados[i], doc);
-			//CONTADOR ES LA DISTANCIA QUE DEBERIA TENER A LA PRIMER PALABRA.
-			contador++;
-			//PARA CADA UNA DE LAS PALABRAS CALCULO LA DISTANCIA DE CADA UNA DE SUS POSICIONES A LA PRIMER PALABRA.
-			bool candidato=false;
-
-			int h=0;
-			while( !candidato && (h < palabraPosiciones.getCantPosiciones())){
-				//Calculo la distancia que tiene que ser coherente con el contador
-				int posh = palabraPosiciones.getPosiciones()[h];
-
-				//Si la posicion actual de la palabra siguiente se pasa de la que deberia ser, al estar ordenadas, deja de ser
-				//candidata a armar la frase.
-				if(posh>contador)
-					break;
-
-				//si alguna coincide con el contador, esta a la distancia que corresponde
-				if(contador==posh){
-					candidato=true;
-				}
-				h++;
-			}
-			//Si alguna me llega con candidato en false, no hay frase y se corta el ciclo
-			if(!candidato){
-				esFrase = false;
+	//Para todas las posiciones de la primer palabra de la frase.
+	for (it=primerPalabraPosiciones->begin(); it!=primerPalabraPosiciones->end(); ++it){
+		//Contador es quien lleva la coherencia de la frase.
+		int contador = *it+1;
+		//Para todo el resto de palabras de la frase
+		for(int i=1; i<cantidad; i++){
+			string palabra = nodosEncontrados[i].getPalabra();
+			string cadenaABuscar;
+			stringstream ss;
+			//Me armo la cadena que tengo que buscar en el set donde estan todas las posiciones de la forma Palabra-Doc-Posicion
+			ss<<palabra<<"-"<<doc<<"-"<<contador;
+			ss >> cadenaABuscar;
+			//Si existe alguna posicion que matchee, la palabra sigue la frase, si no, no.
+			esFrase = (set.count(cadenaABuscar)!=0);
+			//Si alguna palabra me rompe la coherencia, no es frase, chau.
+			if(!esFrase){
 				break;
 			}
+			contador++;
 		}
-		if(esFrase)
+		//Ya se que es una frase y esta en el docu así que no sigo buscando.
+		if(esFrase){
+			delete(primerPalabraPosiciones);
 			return true;
-	}
+		}
 
-	return false;
+	}
+	delete(primerPalabraPosiciones);
+	return esFrase;
 }
 
-
-
-
 //Devuelve todas las posiciones de una palabra en un documento
-Posiciones Buscador::getPosiciones(abb::Nodo n, int doc){
+std::set<int>* Buscador::getPosiciones(abb::Nodo n, int doc){
 	int frec;
 	int pos = getPosPalabraEnVectorPosiciones(n,doc,&frec);
-	Posiciones posis;
+	std::set<int>* posis = new std::set<int>();
 	for(int i=0; i<frec; i++){
-		posis.agregarPosicion(n.getPosiciones()->getPosiciones()[pos]);
+		posis->insert((n.getPosiciones()->getPosiciones()[pos]));
 		pos++;
 	}
 	return posis;
-}
-
-
-bool Buscador::esPalabraSiguiente(abb::Nodo n1, abb::Nodo n2, int doc, int* ultimaPos){
-	int frec1 = 0;
-	int frec2 = 0;
-
-
-	int pos1 = this->getPosPalabraEnVectorPosiciones(n1,doc,&frec1);
-	int pos2 = this->getPosPalabraEnVectorPosiciones(n2,doc,&frec2);
-	int pos2Original = pos2;
-
-
-	for(int i=0; i<frec1; i++){
-		for(int j=0; j<frec2; j++){
-			int ubicacionPalabra1 = n1.getPosiciones()->getPosiciones()[pos1];
-			int ubicacionPalabra2menosUno = n2.getPosiciones()->getPosiciones()[pos2]-1;
-			bool esSiguiente =  ((ubicacionPalabra1) == (ubicacionPalabra2menosUno));
-			*ultimaPos=n2.getPosiciones()->getPosiciones()[pos2];
-			if(esSiguiente){
-				return true;
-			}
-			pos2++;
-		}
-		//Tengo que reiniciar pos2
-		pos2=pos2Original;
-		pos1++;
-	}
-	return false;
 }
 
 
@@ -458,6 +437,7 @@ void Buscador::levantarArbol(){
 
 		//LE PONGO TODAS LAS PROPIEDADES
 		nuevoNodo.setPalabra(strPalabra);
+		cout<<strPalabra<<endl;
 
 		//agregando chanchadas al tp.
 		//Si es la primer palabra (dado que no consideramos la linea (0,0,0,0), le ponemos un offset de -1
