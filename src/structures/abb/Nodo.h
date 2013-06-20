@@ -12,6 +12,7 @@
 #define ORDEN_NODO 40
 #endif
 #include <iostream>
+#include <vector>
 #include <stdio.h>
 #include <stdlib.h>
 using namespace std;
@@ -46,7 +47,12 @@ public:
 
 	void borrar();
 
+	/**
+	 * Serializa posiciones, documentos y frecuencias en un array de enteros
+	 */
+	std::vector<int> serializarPosiciones();
 
+	void deserializarPosiciones(std::vector<int> data);
 
 	bool operator==(Nodo&);//compara a igual
 	bool operator<(Nodo&);//compara a menor
