@@ -29,7 +29,7 @@ void testArchivoGamma();
 
 int main(int argc, char* argv[]) {
 
-/*	//Parametro -i arma el indice.
+	//Parametro -i arma el indice.
   	if((strcmp(argv[1],"-i")==0)){
   		char* textos = argv[2];
   		parser::ParserDirectorio pars(textos);
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 			cout<<"Ningún documento contiene la frase buscada."<<endl;
 		}
 	} else
-		cout<<"USAGE: ./Datos -<i,r> <directorio,frase>"<<endl;*/
+		cout<<"USAGE: ./Datos -<i,r> <directorio,frase>"<<endl;
 
 //	char* textos = "/home/lucia/miau";
 //	parser::ParserDirectorio pars(textos);
@@ -76,6 +76,6 @@ void testArchivoGamma(){
 	gammaFile.cerrar();
 	gammaFile.abrir();
 	vec2 = gammaFile.levantarVector(0);
-	for (int i = 0 ; i< 4; i++)
+	for (int i = 0 ; i< vec2.size(); i++)
 			cout << vec2[i] << endl;
 }
