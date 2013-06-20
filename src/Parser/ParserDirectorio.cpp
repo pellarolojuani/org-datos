@@ -29,11 +29,11 @@ ParserDirectorio::ParserDirectorio(char* nombreDirectorio) {
 
 	arbolito = new abb::ArbolB<abb::Nodo, ORDEN_NODO>;
 
-	this->archivoDirectorios = fopen(constantes::NombresArchivos::archivoDirectorios, "w");
-	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros, "w");
-	this->archivoLexicoFC = fopen(constantes::NombresArchivos::archivoLexico,"w");
-	this->tablaLexicoFC = fopen(constantes::NombresArchivos::archivoTablaLexico,"w");
-	this->archivoPosRelativas = fopen(constantes::NombresArchivos::archivoPosicionesRelativas, "w");
+	this->archivoDirectorios = fopen(constantes::NombresArchivos::archivoDirectorios, "wb");
+	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros, "wb");
+	this->archivoLexicoFC = fopen(constantes::NombresArchivos::archivoLexico,"wb");
+	this->tablaLexicoFC = fopen(constantes::NombresArchivos::archivoTablaLexico,"wb");
+	this->archivoPosRelativas = fopen(constantes::NombresArchivos::archivoPosicionesRelativas, "wb");
 
 
 }
@@ -102,7 +102,6 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	pos->agregarPosicion(0);
 	nod.setDocumentos(pos);
 	nod.setPosiciones(pos);
-	nod.setFrecuencias(pos);
 	arbolito->insertar(nod);
 
 	this->almacenarLexico();
