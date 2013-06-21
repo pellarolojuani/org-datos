@@ -23,9 +23,9 @@ public:
 	Frontcoding(FILE* nombreArchivoLexico, FILE* nombreArchivoTabla );
 
 	string compararPorCharDistintos(string uno, string dos, int* cantidad);
-	int guardarEnArchivo(string str, int charsDistintos, int offset, int offsetPosiciones, int offsetPunteros);
+	int guardarEnArchivo(string str, int charsDistintos, int offset, int offsetPosiciones);
 
-	void agregarPalabra(string palabra, int offsetPosiciones, int offsetPunteros);
+	void agregarPalabra(string palabra, int offsetPosiciones);
 
 	virtual ~Frontcoding();
 private:

@@ -19,15 +19,15 @@ Frontcoding::Frontcoding(FILE* rutaArchivoLexico, FILE* rutaArchivoTabla ) {
 
 }
 
-void Frontcoding::agregarPalabra(string str, int offsetPosiciones, int offsetPunteros){
+void Frontcoding::agregarPalabra(string str, int offsetPosiciones){
 	if (str.compare(".") == 0){
-		this->guardarEnArchivo(str, 0, 0, offsetPosiciones, offsetPunteros);
+		this->guardarEnArchivo(str, 0, 0, offsetPosiciones);
 		this->palabraAnterior = str;
 	} else {
 
 		int cant;
 		string substr = compararPorCharDistintos(palabraAnterior,str,&cant);
-		this->guardarEnArchivo(substr, cant, offset,offsetPosiciones,offsetPunteros);
+		this->guardarEnArchivo(substr, cant, offset,offsetPosiciones);
 		this->offset+=substr.length();
 		this->palabraAnterior = str;
 
@@ -50,10 +50,10 @@ string Frontcoding::compararPorCharDistintos(string uno, string dos, int* cantid
 
 //SE PONE : CARACTERES DISTINTOS DEL STRING EN EL LEXICO
 //SE PONE:  NRO CARACTERES IGUALES, OFFSET A LEXICO, OFFSET A PUNTEROS, OFFSET A POSICIONES.
-int Frontcoding::guardarEnArchivo(string str, int charsIguales, int offset, int offsetPosiciones, int offsetPunteros){
+int Frontcoding::guardarEnArchivo(string str, int charsIguales, int offset, int offsetPosiciones){
 	fputs(str.c_str(), this->archIntlexico);
 	//OBVIAMOS LA LINEA "0,0,0,0" de la primer palabra.
-	if(!((charsIguales == 0)&& (offset == 0)&&(offsetPosiciones == 0)&&(offsetPunteros == 0))){
+	if(!((charsIguales == 0)&& (offset == 0)&&(offsetPosiciones == 0))){
 		stringstream s1;
 		s1 << charsIguales;
 		string strDist = s1.str();
@@ -61,10 +61,6 @@ int Frontcoding::guardarEnArchivo(string str, int charsIguales, int offset, int 
 		stringstream ss;
 		ss << offset;
 		string strOffset = ss.str();
-
-		stringstream s2;
-		s2 << offsetPunteros;
-		string strOffsetPunteros = s2.str();
 
 		stringstream s3;
 		s3 << offsetPosiciones;
@@ -74,10 +70,6 @@ int Frontcoding::guardarEnArchivo(string str, int charsIguales, int offset, int 
 		fputs(",", this->archIntTabla);
 		fputs(strDist.c_str(), this->archIntTabla);
 		fputs(",", this->archIntTabla);
-
-		fputs(strOffsetPunteros.c_str(), this->archIntTabla);
-		fputs(",", this->archIntTabla);
-
 		fputs(strOffsetPosiciones.c_str(), this->archIntTabla);
 		fputc('\n', this->archIntTabla);
 	}
