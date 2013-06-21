@@ -12,6 +12,7 @@
 #include "../structures/abb/ArbolB.h"
 #include "../structures/abb/Nodo.h"
 #include "../NombresArchivos.h"
+#include "../CodigosDelta/CodigoGamma.h"
 #include "Match.h"
 #include <iostream>
 #include <set>
@@ -34,21 +35,17 @@ private:
 	FILE* tablalexico;
 	FILE* archivoPunteros;
 	FILE* archivoPosiciones;
+	ArchivoGamma archivoGamma;
 	string* parsearLinea(char* line);
 	string toString(char c);
-
 	bool poseeDocumento(abb::Nodo nodo, int documento);
 	bool esDocumentoCandidato(abb::Nodo* nodosEncontrados, int cantidadNodos, int documento);
-
 	bool esFrase(abb::Nodo* ns, int cantidad, int doc);
-	bool estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras);
-
+	bool asignarPosicionesAPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras);
 	int getPosPalabraEnVectorPosiciones(abb::Nodo n1, int doc, int* frecuenciaADevolver);
-
 	std::set<int>* getPosiciones(abb::Nodo n, int doc);
-
-
 	std::set<string> armarSetParaBusquedaFrases(abb::Nodo* nodosEncontrados, int cant, int doc);
+	abb::Nodo buscarTermino2(string term);
 
 	abb::ArbolB<abb::Nodo, ORDEN_NODO>* arbolB;
 
