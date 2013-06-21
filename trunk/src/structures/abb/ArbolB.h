@@ -27,6 +27,8 @@ Axiomas: 1 - Todas sus hojas estan en el mismo nivel.
 #include "../../FrontCoding/Frontcoding.h"
 #include "../../PersistorPunteros/PersistorPunteros.h"
 #include "../../Parser/Posiciones.h"
+#include "../../CodigosDelta/ArchivoGamma.h"
+
 using namespace std;
 
 namespace abb {
@@ -129,10 +131,9 @@ class ArbolB{
 
 
     //FUNCION TOTALMENTE DESUBICADA ACA
-    void guardarLexico(frontcoding::Frontcoding FC, punteros::PersistorPunteros PP){
-    	guardarLexicoRe(this->raiz, &FC, &PP);
-
-
+    void guardarLexicoYPunteros(frontcoding::Frontcoding FC){
+    	ArchivoGamma gammaFile;
+    	guardarLexicoRe(this->raiz, &FC, &gammaFile);
     }
 
 
@@ -170,7 +171,7 @@ class ArbolB{
 //			delete actual;
 		}
 
-        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC, punteros::PersistorPunteros *PP)
+        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC, ArchivoGamma *gammaFile)
 		{
 			int i;
 			if (actual){
@@ -179,20 +180,17 @@ class ArbolB{
 				{
 					//Guardo lexico
 
-					guardarLexicoRe(actual->ramas[i], FC, PP);
+					guardarLexicoRe(actual->ramas[i], FC, gammaFile);
 					string palabrastr = (string) (actual->data[i].getPalabra());
-					parser::Posiciones* documentos = (parser::Posiciones*) (actual->data[i].getDocumentos());
-					parser::Posiciones* posicionesRel = (parser::Posiciones*) (actual->data[i].getPosiciones());
-					FC->agregarPalabra(palabrastr, PP->getOffsetPosiciones(), PP->getOffsetPunteros());
-					PP->persistirDistancias(documentos, posicionesRel);
+					cout<<palabrastr<<endl;
+					//Serializo en el archivo.
+					int offset = gammaFile->guardarVector(actual->data[i].serializarPosiciones());
+					FC->agregarPalabra(palabrastr, offset);
 
-
-
-					//Guardo punteros
 
 
 				}
-				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC, PP);
+				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC, gammaFile);
 			}
 		}
 

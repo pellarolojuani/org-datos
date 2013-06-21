@@ -6,6 +6,7 @@
  */
 
 #include "../Parser/Posiciones.h"
+#include "../CodigosDelta/CodigoGamma.h"
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -23,6 +24,7 @@ class PersistorPunteros {
 public:
 	PersistorPunteros(FILE* archivoPunteros, FILE* archivoPosiciones);
 	void persistirDistancias(parser::Posiciones* docs, parser::Posiciones* posRelativas);
+	void persistirDistanciasComprimidas(parser::Posiciones* docs, parser::Posiciones* posRelativas);
 	int getOffsetPunteros();
 	int getOffsetPosiciones();
 	virtual ~PersistorPunteros();

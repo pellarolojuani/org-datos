@@ -9,8 +9,8 @@
 
 namespace abb {
 
-void agregarDocumentos(std::vector<int>& vector, Posiciones* documentos);
-void agregarPosiciones(std::vector<int>& vector, Posiciones* posiciones);
+void agregarDocumentos(std::vector<unsigned int>& vector, Posiciones* documentos);
+void agregarPosiciones(std::vector<unsigned int>& vector, Posiciones* posiciones);
 
 Nodo::Nodo() {
 	documentos = NULL;
@@ -78,17 +78,48 @@ void Nodo::setFrecuencia(int frecuencia){
 	this->frecuencia = frecuencia;
 }
 
-std::vector<int> Nodo::serializarPosiciones() {
+std::vector<unsigned int> Nodo::serializarPosiciones() {
 	//PRE: asumo que frecuencia me da el tamaño de la lista documentos y de posiciones
-	std::vector<int> result;
+	std::vector<unsigned int> result;
 	agregarDocumentos(result, this->documentos);
 	agregarPosiciones(result, this->posiciones);
 	return result;
 }
 
-void Nodo::deserializarPosiciones(std::vector<int> data) {
+void Nodo::deserializarPosiciones(std::vector<unsigned int> data) {
 	//Acá con el primer valor se cuantos pares hay (documento; frecuencia)
 	//a ese número lo multiplico por 2 y me dice dónde están las posiciones
+
+	std::cout<<"Elementos del vector a desderializar: "<<std::endl;
+	for(int i=0; i<data.size(); i++){
+		std::cout<<data.at(i)<<"   ";
+
+	}
+	std::cout<<std::endl;
+
+	int cantParesDocFrec = data.at(0);
+	int comienzoPosiciones = cantParesDocFrec*2+1;
+	this->documentos = new Posiciones();
+	this->frecuencias = new Posiciones();
+	this->posiciones = new Posiciones();
+
+	int itPosiciones=comienzoPosiciones;
+	int sumaDocAnterior=0;
+	for( int i=1; i<cantParesDocFrec; i+=2 ){
+		int doc = data.at(i+1);
+		this->documentos->agregarPosicion(doc+sumaDocAnterior);
+		int frec = data.at(i);
+		this->frecuencias->agregarPosicion(frec);
+		int sumaPosAnterior=0;
+		while(itPosiciones<frec){
+			//Voy agregando posiciones
+			this->posiciones->agregarPosicion(data.at(itPosiciones)+sumaPosAnterior);
+			itPosiciones++;
+			sumaPosAnterior+=data.at(itPosiciones);
+		}
+		sumaDocAnterior+=doc;
+
+	}
 }
 
 bool Nodo::operator==(Nodo& nuevoFF)
@@ -134,37 +165,51 @@ Nodo::~Nodo() {
 /**
  * Serializo los documentos
  */
-void agregarDocumentos(std::vector<int>& vector, Posiciones* documentos){
+void agregarDocumentos(std::vector<unsigned int>& vector, Posiciones* documentos){
 	vector.empty();
 	int cantidad = documentos->getCantPosiciones();
 	int* posiciones = documentos->getPosiciones();
 	int i = 0;
 	int docActual;
 	int docsDistintos = 0;
+
+	int docAnterior = 0;
+
 	if (cantidad > 0){
+		//Doc actual es la distancia al anterior.
 		docActual = posiciones[i];
 		//reservo un lugar para decir cuantos pares distintos hay
 		vector.push_back(0);
+
 		//Agrupo documentos iguales, la lista pasa a ser pares de (cantidad, número)
 		while (i < cantidad){
 			docsDistintos++;
 			int contador = 0;
-			while (docActual == posiciones [i]){
+			while ((docActual == posiciones [i]) && contador<documentos->getCantPosiciones()){
 				contador++;
 				i++;
 			}
+			cout<<contador<<endl;
 			vector.push_back(contador);
-			vector.push_back(docActual);
+			vector.push_back(docActual-docAnterior);
 			docActual = posiciones[i];
+			docAnterior = docActual;
 		}
+
 	}
+
+
+
 	vector[0] = docsDistintos;
 }
 
-void agregarPosiciones(std::vector<int>& vector, Posiciones* posiciones){
+void agregarPosiciones(std::vector<unsigned int>& vector, Posiciones* posiciones){
 	int* arrPosiciones = posiciones->getPosiciones();
+	int posAnt = 0;
 	for (int i=0; i < posiciones->getCantPosiciones(); i++){
-		vector.push_back(arrPosiciones[i]);
+		//La posicion que agrego es la distancia a la anterior.
+		vector.push_back(arrPosiciones[i]-posAnt);
+		posAnt=arrPosiciones[i];
 	}
 }
 
