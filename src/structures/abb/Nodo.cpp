@@ -9,8 +9,7 @@
 
 namespace abb {
 
-void agregarDocumentos(std::vector<unsigned int>& vector, Posiciones* documentos);
-void agregarPosiciones(std::vector<unsigned int>& vector, Posiciones* posiciones);
+void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos, Posiciones* posicionesRelativas);
 
 Nodo::Nodo() {
 	documentos = NULL;
@@ -81,8 +80,7 @@ void Nodo::setFrecuencia(int frecuencia){
 std::vector<unsigned int> Nodo::serializarPosiciones() {
 	//PRE: asumo que frecuencia me da el tamaño de la lista documentos y de posiciones
 	std::vector<unsigned int> result;
-	agregarDocumentos(result, this->documentos);
-	agregarPosiciones(result, this->posiciones);
+	agregarDistancias(result, this->documentos, this->posiciones);
 	return result;
 }
 
@@ -90,7 +88,7 @@ void Nodo::deserializarPosiciones(std::vector<unsigned int> data) {
 	//Acá con el primer valor se cuantos pares hay (documento; frecuencia)
 	//a ese número lo multiplico por 2 y me dice dónde están las posiciones
 
-	std::cout<<"Elementos del vector a desderializar: "<<std::endl;
+	std::cout<<"Elementos del vector a deserializar: "<<std::endl;
 	for(int i=0; i<data.size(); i++){
 		std::cout<<data.at(i)<<"   ";
 
@@ -165,7 +163,7 @@ Nodo::~Nodo() {
 /**
  * Serializo los documentos
  */
-void agregarDocumentos(std::vector<unsigned int>& vector, Posiciones* documentos){
+void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos, Posiciones* posicionesRelativas){
 	vector.empty();
 	int cantidad = documentos->getCantPosiciones();
 	int* posiciones = documentos->getPosiciones();
@@ -185,7 +183,18 @@ void agregarDocumentos(std::vector<unsigned int>& vector, Posiciones* documentos
 		while (i < cantidad){
 			docsDistintos++;
 			int contador = 0;
-			while ((docActual == posiciones [i]) && contador<documentos->getCantPosiciones()){
+			while ((docActual == posiciones [i]) && i<documentos->getCantPosiciones()){
+				//Las frecuencias las tengo que almacenar aca tambien porque si uso distancias puede quedar mocho.
+				int* arrPosiciones = posicionesRelativas->getPosiciones();
+				int distanciaTermino;
+				if(contador==0){
+					distanciaTermino = arrPosiciones[i];
+				} else
+					distanciaTermino = arrPosiciones[i]-arrPosiciones[i-1];
+
+				//La posicion que agrego es la distancia a la anterior.
+				vector.push_back(distanciaTermino);
+
 				contador++;
 				i++;
 			}
@@ -197,20 +206,7 @@ void agregarDocumentos(std::vector<unsigned int>& vector, Posiciones* documentos
 		}
 
 	}
-
-
-
 	vector[0] = docsDistintos;
-}
-
-void agregarPosiciones(std::vector<unsigned int>& vector, Posiciones* posiciones){
-	int* arrPosiciones = posiciones->getPosiciones();
-	int posAnt = 0;
-	for (int i=0; i < posiciones->getCantPosiciones(); i++){
-		//La posicion que agrego es la distancia a la anterior.
-		vector.push_back(arrPosiciones[i]-posAnt);
-		posAnt=arrPosiciones[i];
-	}
 }
 
 } /* namespace abb */
