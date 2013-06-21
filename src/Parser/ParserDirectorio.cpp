@@ -10,6 +10,7 @@
 #include "../structures/abb/Nodo.h"
 #include "../FrontCoding/Frontcoding.h"
 #include "../NombresArchivos.h"
+#include "../CodigosDelta/ArchivoGamma.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -34,6 +35,8 @@ ParserDirectorio::ParserDirectorio(char* nombreDirectorio) {
 	this->archivoLexicoFC = fopen(constantes::NombresArchivos::archivoLexico,"wb");
 	this->tablaLexicoFC = fopen(constantes::NombresArchivos::archivoTablaLexico,"wb");
 	this->archivoPosRelativas = fopen(constantes::NombresArchivos::archivoPosicionesRelativas, "wb");
+	//No se si esta bien, pero creo que cada vez que armo el indice debo borrar todo el gamma anterior.
+	this->archivoGamma = fopen(constantes::NombresArchivos::archivoGamma, "wb");
 
 
 }
@@ -97,14 +100,14 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	abb::Nodo nod;
 	//TODO ARREGLAR ESTA GUASADA
 	//lo agregue porque al levantar el arbol misteriosamente no toma la ultima palabra. APCSC.
-	nod.setPalabra("zzzzzzzzzzzzzzz");
+	nod.setPalabra("zzzzzzzzzzzzzzzzzzzzz");
 	Posiciones* pos = new parser::Posiciones();
 	pos->agregarPosicion(0);
 	nod.setDocumentos(pos);
 	nod.setPosiciones(pos);
 	arbolito->insertar(nod);
 
-	this->almacenarLexico();
+	this->almacenarIndice();
 
 	//CIERRO TOOOODO
 	fclose(this->archivoDirectorios);
@@ -112,16 +115,14 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta){
 	fclose(this->archivoLexicoFC);
 	fclose(this->tablaLexicoFC);
 	fclose(this->archivoPosRelativas);
+	fclose(this->archivoGamma);
 
 }
 
-void ParserDirectorio::almacenarLexico(){
-	punteros::PersistorPunteros PP(this->archivoPunteros, this->archivoPosRelativas);
+void ParserDirectorio::almacenarIndice(){
 	frontcoding::Frontcoding FC(this->archivoLexicoFC, this->tablaLexicoFC);
-	arbolito->guardarLexico(FC, PP);
+	arbolito->guardarLexicoYPunteros(FC);
 }
-
-
 
 void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 	//Paso a abrir el directorio y parsearlo linea por linea
@@ -130,11 +131,7 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 
 	while (fgets(linea, LONG_MAX_LINEA, dirAct) != NULL){
 		posis.resetCantidadPosiciones();
-
 		string* parseo = this->parser->parsearLinea(linea,&posis, MAX_POSICIONES_LINEA);
-
-
-
 		for (int i = 0; i<posis.getCantPosiciones(); i++) {
 
 			//VEO SI YA ESTA EN EL ABB
@@ -155,10 +152,8 @@ void ParserDirectorio::parseFile(FILE* dirAct, int offsetDocs){
 			//SI NO ESTA LO INSERTO.
 				Posiciones* nuevosOffsetDocs = new Posiciones();
 				Posiciones* nuevasPosiciones = new Posiciones();
-
 				nuevasPosiciones->agregarPosicion(posis.getPosiciones()[i]);
 				nuevosOffsetDocs->agregarPosicion(offsetDocs);
-
 				nodotar.setFrecuencia(1);
 				nodotar.setPosiciones(nuevasPosiciones);
 				nodotar.setDocumentos(nuevosOffsetDocs);

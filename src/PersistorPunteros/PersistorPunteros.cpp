@@ -7,6 +7,7 @@
 
 #include "PersistorPunteros.h"
 
+
 namespace punteros {
 
 PersistorPunteros::PersistorPunteros(FILE* archivoPunteros, FILE* archivoPosiciones) {
@@ -25,6 +26,22 @@ int PersistorPunteros::getOffsetPosiciones(){
 	return this->offsetPosiciones;
 }
 
+void PersistorPunteros::persistirDistanciasComprimidas(parser::Posiciones* docs, parser::Posiciones* posRelativas){
+
+	for(int i=0; i<docs->getCantPosiciones(); i++){
+		//PARA CADA DOCUMENTO CALCULO LA DISTANCIA Y LA COMPRIMO EN GAMMA
+
+		int doc = docs->getPosiciones()[i];
+		int docAct = doc;
+		int distancia=doc;
+		if(i!=0){
+			distancia = doc - docs->getPosiciones()[i-1];
+		}
+
+	}
+
+
+}
 void PersistorPunteros::persistirDistancias(parser::Posiciones* docs, parser::Posiciones* posRelativas){
 
 	int i=0;
@@ -65,7 +82,7 @@ void PersistorPunteros::persistirDistancias(parser::Posiciones* docs, parser::Po
 			stringstream s2;
 			s2 << distanciaTerm;
 			string distanciaTermStr = s2.str();
-			distanciaTermStr.append(",");
+//			distanciaTermStr.append(",");
 			fputs(distanciaTermStr.c_str(), this->archivoPosiciones);
 
 //			this->offsetPosiciones+=distanciaTermStr.length();
@@ -82,7 +99,7 @@ void PersistorPunteros::persistirDistancias(parser::Posiciones* docs, parser::Po
 		stringstream s4;
 		s4 << frecuencia;
 		string strFrec= s4.str();
-		strFrec.append(",");
+//		strFrec.append(",");
 		fputs(strFrec.c_str(), this->archivoPunteros);
 		this->offsetPunteros=ftell(this->archivoPunteros);
 

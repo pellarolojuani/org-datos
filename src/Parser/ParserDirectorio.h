@@ -43,6 +43,7 @@ private:
 
 	FILE* archivoPunteros;
 	FILE* archivoPosRelativas;
+	FILE* archivoGamma;
 
 	FILE* archivoLexicoFC;
 	FILE* tablaLexicoFC;
@@ -56,8 +57,8 @@ private:
 	//Aca es donde ocurre la magia
 	abb::ArbolB<abb::Nodo, ORDEN_NODO>* arbolito;
 
-	void almacenarLexico();
-	void almacenarPunteros();
+	void almacenarIndice();
+
 };
 
 } /* namespace parser */
