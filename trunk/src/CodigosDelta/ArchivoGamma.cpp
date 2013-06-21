@@ -33,6 +33,7 @@ void ArchivoGamma::setPosicion(long posicion){
 
 int ArchivoGamma::guardarVector(std::vector<unsigned int> vector) {
 	char* destino;
+	int posPrincipio = file.tellp();
 	//Le agrego el tamaño al principio de todo
 	vector.insert(vector.begin(),vector.size());
 	//Codifico el vector
@@ -40,11 +41,13 @@ int ArchivoGamma::guardarVector(std::vector<unsigned int> vector) {
 	unsigned int bytes = (bits - 1)/8 + 1;
 	//Lo guardo al archivo
 	file.write(destino, bytes);
-	return file.tellp();
+
+	return posPrincipio;
 }
 
 std::vector<unsigned int> ArchivoGamma::levantarVector(int posicion) {
 	std::vector<unsigned int> result;
+
 	//Armo un buff generoso para el primer número
 	char* buf = new char[8];
 	file.read(buf, 8);
