@@ -30,7 +30,7 @@ Buscador::Buscador() {
 	this->tablalexico = fopen(constantes::NombresArchivos::archivoTablaLexico,"rb");
 	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros,"rb");
 	this->archivoPosiciones = fopen(constantes::NombresArchivos::archivoPosicionesRelativas,"rb");
-
+	archivoGamma.abrir();
 	this->arbolB = new abb::ArbolB<abb::Nodo, ORDEN_NODO>();
 	this->levantarArbol();
 
@@ -52,16 +52,31 @@ match::Match* Buscador::buscarFrase(string frase){
 	}
 
 	abb::Nodo nodosEncontrados[LONG_MAX_STRING_BUSQUEDA];
-	bool estanTodas = estanTodasLasPalabras(nodosEncontrados, palabras, posiciones.getCantPosiciones());
+	bool estanTodas = asignarPosicionesAPalabras(nodosEncontrados, palabras, posiciones.getCantPosiciones());
 	if(!estanTodas) {
 		match->setEncontroFrase(false);
 		match->setOffsetsDocumentos(new Posiciones());
 		return match;
 	}
 
+
+
 	abb::Nodo menor = nodosEncontrados[0];
 	//Agarro el que tiene menor cantidad de documentos:
 	for (int i=0; i <posiciones.getCantPosiciones(); i++){
+
+		cout<<"Posiciones: ";
+		for(int j=0; j<nodosEncontrados[i].getPosiciones()->getCantPosiciones();j++){
+			cout<<nodosEncontrados[i].getPosiciones()->getPosiciones()[j]<<"   ";
+		}
+		cout<<endl;
+		cout<<"Documentos: ";
+		for(int h=0; h<nodosEncontrados[i].getDocumentos()->getCantPosiciones();h++){
+			cout<<nodosEncontrados[i].getDocumentos()->getPosiciones()[h]<<"   ";
+		}
+		cout<<endl;
+
+
 		if(nodosEncontrados[i].getDocumentos()->getCantPosiciones() < menor.getDocumentos()->getCantPosiciones()){
 			menor = nodosEncontrados[i];
 		}
@@ -125,7 +140,7 @@ std::set<string> Buscador::armarSetParaBusquedaFrases(abb::Nodo* nodosEncontrado
 	return set;
 }
 
-bool Buscador::estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras){
+bool Buscador::asignarPosicionesAPalabras(abb::Nodo* nodosEncontrados, string* palabras, int cantidadPalabras){
 	//BUSCO CADA FRASE EN EL ARBOL SI UNA NO ESTA ZARAZA
 	bool estanTodas = true;
 	for(int i = 0; i<cantidadPalabras; i++){
@@ -139,7 +154,7 @@ bool Buscador::estanTodasLasPalabras(abb::Nodo* nodosEncontrados, string* palabr
 			return false;
 		} else {
 			abb::Nodo n;
-			n=buscarTermino(palabras[i]);
+			n=buscarTermino2(palabras[i]);
 			nodosEncontrados[i] = n;
 		}
 	}
@@ -249,7 +264,32 @@ bool Buscador::poseeDocumento(abb::Nodo nodo, int documento){
 	return false;
 }
 
+//PRE: ya no se comprueba que el termino este en la coleccion, so, el termino DEBE estar en la coleccion si se llama a esta funcion.
+abb::Nodo Buscador::buscarTermino2(string term){
+	abb::Nodo nodob;
+	nodob.setPalabra(term);
+	nodob = arbolB->buscarYdevolver(nodob);
+	string* tokens;
+	//SI EL OFFSET ME DA -1 ES PORQUE SE TRATA DE LA PRIMER PALABRA, Y COMO ESA LINEA NO LA
+	//ESCRIBO EN LA TABLA, se lo tengo que avisar al seeker.
+	int offset = nodob.getLineaTabla();
+	if(offset != -1){
+		char line[LONG_MAX_LINEA];
+		fseek(this->tablalexico, nodob.getLineaTabla(),SEEK_SET);
+		fgets(line,LONG_MAX_LINEA, this->tablalexico);
+		tokens = parsearLinea(line);
+	} else {
+		tokens = parsearLinea("0,0,0,0");
+		fseek(this->tablalexico, 0,SEEK_SET);
+	}
+	cout<<tokens[2]<<endl;
+	std::vector<unsigned int> punteros = archivoGamma.levantarVector(atoi(tokens[2].c_str()));
+	nodob.deserializarPosiciones(punteros);
+	return nodob;
 
+}
+
+//-------------- A BORRAR CUANDO TODO SALGA BIEN ----------------
 abb::Nodo Buscador::buscarTermino(string term){
 
 	abb::Nodo nodob;;
@@ -257,10 +297,10 @@ abb::Nodo Buscador::buscarTermino(string term){
 
 	if(arbolB->buscar(nodob)){
 		nodob = arbolB->buscarYdevolver(nodob);
-
 		Posiciones* documentos = new Posiciones();
 		Posiciones* posiciones = new Posiciones();
 		Posiciones* frecuencias = new Posiciones();
+
 
 		string* tokens;
 		//SI EL OFFSET ME DA -1 ES PORQUE SE TRATA DE LA PRIMER PALABRA, Y COMO ESA LINEA NO LA
