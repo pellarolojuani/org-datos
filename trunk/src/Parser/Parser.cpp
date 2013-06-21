@@ -12,7 +12,7 @@ namespace parser {
 Parser::Parser() {
 	this->delimitadores = DELIMITADORES;
 	pos = 0;
-	numeroPalabra = 0;
+	numeroPalabra = 1;
 
 }
 
@@ -88,7 +88,7 @@ string*  Parser::parsearLinea(string str, Posiciones* posicionesFinales, int max
 			string palabra = str.substr(indiceComienzoPalabra);
 			palabra=quitarFinDeLinea(palabra);
 			arrayPalabras[indicePalabra] = tolowercase(palabra);
-//			numeroPalabra++;
+			numeroPalabra++;
 
 			posicionesFinales->agregarPosicion(numeroPalabra);
 
@@ -142,7 +142,7 @@ int Parser::getUltimaPosicion(){
 
 void Parser::resetUltimaPosicion(){
 	this->pos=0;
-	this->numeroPalabra=0;
+	this->numeroPalabra=1;
 }
 
 string Parser::quitarFinDeLinea(string s){
