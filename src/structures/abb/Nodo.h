@@ -50,9 +50,9 @@ public:
 	/**
 	 * Serializa posiciones, documentos y frecuencias en un array de enteros
 	 */
-	std::vector<int> serializarPosiciones();
+	std::vector<unsigned int> serializarPosiciones();
 
-	void deserializarPosiciones(std::vector<int> data);
+	void deserializarPosiciones(std::vector<unsigned int> data);
 
 	bool operator==(Nodo&);//compara a igual
 	bool operator<(Nodo&);//compara a menor
