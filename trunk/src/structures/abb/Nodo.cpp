@@ -81,6 +81,12 @@ std::vector<unsigned int> Nodo::serializarPosiciones() {
 	//PRE: asumo que frecuencia me da el tamaño de la lista documentos y de posiciones
 	std::vector<unsigned int> result;
 	agregarDistancias(result, this->documentos, this->posiciones);
+	std::cout<<"Elementos del vector a serializar: "<<std::endl;
+	for(int i=0; i<result.size(); i++){
+		std::cout<<result.at(i)<<"   ";
+
+	}
+	std::cout<<std::endl;
 	return result;
 }
 
@@ -164,14 +170,14 @@ Nodo::~Nodo() {
  * Serializo los documentos
  */
 void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos, Posiciones* posicionesRelativas){
-	vector.empty();
+	vector.clear();
 	int cantidad = documentos->getCantPosiciones();
 	int* posiciones = documentos->getPosiciones();
 	int i = 0;
-	int docActual;
+	int docActual=0;
 	int docsDistintos = 0;
-
 	int docAnterior = 0;
+	std::vector<unsigned int> frecuenciasParciales;
 
 	if (cantidad > 0){
 		//Doc actual es la distancia al anterior.
@@ -181,9 +187,10 @@ void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos
 
 		//Agrupo documentos iguales, la lista pasa a ser pares de (cantidad, número)
 		while (i < cantidad){
+
 			docsDistintos++;
 			int contador = 0;
-			while ((docActual == posiciones [i]) && i<documentos->getCantPosiciones()){
+			while ((docActual == posiciones[i]) && i<documentos->getCantPosiciones()){
 				//Las frecuencias las tengo que almacenar aca tambien porque si uso distancias puede quedar mocho.
 				int* arrPosiciones = posicionesRelativas->getPosiciones();
 				int distanciaTermino;
@@ -193,17 +200,29 @@ void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos
 					distanciaTermino = arrPosiciones[i]-arrPosiciones[i-1];
 
 				//La posicion que agrego es la distancia a la anterior.
-				vector.push_back(distanciaTermino);
+				frecuenciasParciales.push_back(distanciaTermino);
 
 				contador++;
 				i++;
+				docAnterior = docActual;
+
 			}
-			cout<<contador<<endl;
+
+			int distanciaDocumento;
+			if(docActual==docAnterior){
+				distanciaDocumento = docActual;
+			} else
+				distanciaDocumento = docActual-docAnterior;
+
 			vector.push_back(contador);
-			vector.push_back(docActual-docAnterior);
-			docActual = posiciones[i];
+			vector.push_back(distanciaDocumento);
 			docAnterior = docActual;
+			docActual = posiciones[i];
 		}
+	}
+	//Finalmente agrego todas las frecuencias
+	for(int i=0; i<frecuenciasParciales.size();i++){
+		vector.push_back(frecuenciasParciales.at(i));
 
 	}
 	vector[0] = docsDistintos;
