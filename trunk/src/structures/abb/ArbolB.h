@@ -182,9 +182,24 @@ class ArbolB{
 
 					guardarLexicoRe(actual->ramas[i], FC, gammaFile);
 					string palabrastr = (string) (actual->data[i].getPalabra());
-					cout<<palabrastr<<endl;
 					//Serializo en el archivo.
-					int offset = gammaFile->guardarVector(actual->data[i].serializarPosiciones());
+					vector<unsigned int> posiciones = actual->data[i].serializarPosiciones();
+					cout<<"Posiciones a serializar:  "<<endl;
+					for(int i=0; i<posiciones.size();i++){
+						cout<<posiciones.at(i)<<"     ";
+					}
+					cout<<endl;
+
+					int offset = gammaFile->guardarVector(posiciones);
+					cout<<palabrastr<<"  offset: "<<offset<<endl;
+
+					cout<<"Levanto el archivo de gammaFile para ver si es el mismo vector"<<endl;
+					vector<unsigned int> vecto = gammaFile->levantarVector(offset);
+					for(int i=0; i<vecto.size();i++){
+						cout<<vecto.at(i)<<"   ";
+					}
+					cout<<endl;
+					cout<<palabrastr<<"  offset: "<<offset<<endl;
 					FC->agregarPalabra(palabrastr, offset);
 
 
