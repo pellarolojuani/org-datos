@@ -59,24 +59,20 @@ match::Match* Buscador::buscarFrase(string frase){
 		return match;
 	}
 
-
+	cout<<"Posiciones: ";
+	for(int j=0; j<nodosEncontrados[0].getPosiciones()->getCantPosiciones();j++){
+		cout<<nodosEncontrados[0].getPosiciones()->getPosiciones()[j]<<"   ";
+	}
+	cout<<endl;
+	cout<<"Documentos: ";
+	for(int h=0; h<nodosEncontrados[0].getDocumentos()->getCantPosiciones();h++){
+		cout<<nodosEncontrados[0].getDocumentos()->getPosiciones()[h]<<"   ";
+	}
+	cout<<endl;
 
 	abb::Nodo menor = nodosEncontrados[0];
 	//Agarro el que tiene menor cantidad de documentos:
 	for (int i=0; i <posiciones.getCantPosiciones(); i++){
-
-		cout<<"Posiciones: ";
-		for(int j=0; j<nodosEncontrados[i].getPosiciones()->getCantPosiciones();j++){
-			cout<<nodosEncontrados[i].getPosiciones()->getPosiciones()[j]<<"   ";
-		}
-		cout<<endl;
-		cout<<"Documentos: ";
-		for(int h=0; h<nodosEncontrados[i].getDocumentos()->getCantPosiciones();h++){
-			cout<<nodosEncontrados[i].getDocumentos()->getPosiciones()[h]<<"   ";
-		}
-		cout<<endl;
-
-
 		if(nodosEncontrados[i].getDocumentos()->getCantPosiciones() < menor.getDocumentos()->getCantPosiciones()){
 			menor = nodosEncontrados[i];
 		}
@@ -282,8 +278,8 @@ abb::Nodo Buscador::buscarTermino2(string term){
 		tokens = parsearLinea("0,0,0,0");
 		fseek(this->tablalexico, 0,SEEK_SET);
 	}
-	cout<<tokens[2]<<endl;
-	std::vector<unsigned int> punteros = archivoGamma.levantarVector(atoi(tokens[2].c_str()));
+	cout<<term<<"offset: "<<tokens[2]<<endl;
+	std::vector<unsigned int> punteros = archivoGamma.levantarVector(6);
 	nodob.deserializarPosiciones(punteros);
 	return nodob;
 
@@ -488,14 +484,10 @@ void Buscador::levantarArbol(){
 			esPrimerPalabra = false;
 		} else if(contador == 1){
 			nuevoNodo.setLineaTabla(offset-(lineaStr.length())-1);
-		}
-		else if(contador == 2){
-			nuevoNodo.setLineaTabla(1+offset-(lineaStr.length()));
-		} else {
+		} //siempre que hay algun cambio, explota el offset de la segunda palabra u_u.
+		 else {
 			nuevoNodo.setLineaTabla(offset-(lineaStr.length()));
 		}
-
-
 		//FINALMENTE LO INSERTO EN EL ARBOL B
 		arbolB->insertar(nuevoNodo);
 
@@ -512,7 +504,7 @@ void Buscador::levantarArbol(){
 
 
 Buscador::~Buscador() {
-	// TODO Auto-generated destructor stub
+	this->archivoGamma.cerrar();
 }
 
 } /* namespace buscador */
