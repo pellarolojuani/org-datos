@@ -18,28 +18,49 @@ Match::Match() {
 	documentos = NULL;
 	fraseExiste = false;
 	cantidadMatches = 0;
-	offsetsDocumentos = NULL;
 }
 
 string* Match::getDocumentos(){
 
 	string* docNames = new string[MAX_MATCHES];
 	for(int i = 0; i<this->offsetsDocumentos->getCantPosiciones(); i++){
-		fseek(archivoDirectorios,offsetsDocumentos->getPosiciones()[i],SEEK_SET);
-		char c = fgetc(archivoDirectorios);
-		string docName;
-		while(c!=','){
-			stringstream s0;
-			string lineaStr;
-			s0 << c;
-			s0 >> lineaStr;
-			docName.append(lineaStr);
-			c=fgetc(this->archivoDirectorios);
-		}
-		docNames[i] =  docName;
+		docNames[i]=descifrarDoc(this->offsetsDocumentos->getPosiciones()[i]);
 	}
 	return docNames;
 
+}
+
+string Match::descifrarDoc(int doc){
+	//Obtengo el offset del docu.
+	fseek(archivoDirectorios,0,SEEK_SET);
+	int n=1;
+	//Offset me dice desde donde leo el string del doc.
+	int offset=0;
+
+	while(n<doc){
+		char c = fgetc(archivoDirectorios);
+		offset++;
+		//Tengo que leer n comas hasta llegar al docu.
+		while(c!=','){
+			c = fgetc(archivoDirectorios);
+			offset++;
+		}
+		n++;
+	}
+
+	fseek(archivoDirectorios,offset,SEEK_SET);
+	char c = fgetc(archivoDirectorios);
+	string docName;
+	while(c!=','){
+		stringstream s0;
+		string lineaStr;
+		s0 << c;
+		s0 >> lineaStr;
+		docName.append(lineaStr);
+		c=fgetc(this->archivoDirectorios);
+	}
+
+	return docName;
 }
 
 void Match::setOffsetsDocumentos(parser::Posiciones* offsetsDocumentos){
@@ -47,7 +68,7 @@ void Match::setOffsetsDocumentos(parser::Posiciones* offsetsDocumentos){
 }
 
 void Match::agregarMatch(int doc){
-//	this->offsetsDocumentos->agregarPosicion(doc);
+	this->offsetsDocumentos->agregarPosicion(doc);
 }
 
 int Match::getCantidadMatches(){
