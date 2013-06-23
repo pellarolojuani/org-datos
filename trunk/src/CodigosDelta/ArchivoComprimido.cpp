@@ -19,7 +19,7 @@ ArchivoComprimido::~ArchivoComprimido() {
 }
 
 void ArchivoComprimido::abrir() {
-	this->file.open(constantes::NombresArchivos::archivoGamma, std::fstream::in | std::fstream::out | std::fstream::binary);
+	this->file.open(constantes::NombresArchivos::archivoComprimido, std::fstream::in | std::fstream::out | std::fstream::binary);
 }
 
 void ArchivoComprimido::cerrar() {

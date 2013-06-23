@@ -16,11 +16,9 @@ class NombresArchivos {
 public:
 	NombresArchivos();
 	static const char* archivoDirectorios;
-	static const char* archivoPunteros;
 	static const char* archivoLexico;
 	static const char* archivoTablaLexico;
-	static const char* archivoPosicionesRelativas;
-	static const char* archivoGamma;
+	static const char* archivoComprimido;
 	virtual ~NombresArchivos();
 };
 

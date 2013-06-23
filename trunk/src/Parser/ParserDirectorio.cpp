@@ -25,17 +25,12 @@ namespace parser {
 ParserDirectorio::ParserDirectorio(char* nombreDirectorio) {
 	this->nombreDirectorio = nombreDirectorio;
 	this->parser = new Parser();
-
 	arbolito = new abb::ArbolB<abb::Nodo, ORDEN_NODO>;
-
-	this->archivoDirectorios = fopen(
-			constantes::NombresArchivos::archivoDirectorios, "wb");
-	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros,"wb");
+	this->archivoDirectorios = fopen(constantes::NombresArchivos::archivoDirectorios, "wb");
 	this->archivoLexicoFC = fopen(constantes::NombresArchivos::archivoLexico,"wb");
 	this->tablaLexicoFC = fopen(constantes::NombresArchivos::archivoTablaLexico,"wb");
-	this->archivoPosRelativas = fopen(constantes::NombresArchivos::archivoPosicionesRelativas, "wb");
 	//No se si esta bien, pero creo que cada vez que armo el indice debo borrar todo el gamma anterior.
-	this->archivoGamma = fopen(constantes::NombresArchivos::archivoGamma, "wb");
+	this->archivoComprimido = fopen(constantes::NombresArchivos::archivoComprimido, "wb");
 
 }
 
@@ -98,7 +93,7 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta) {
 	abb::Nodo nod;
 	//TODO ARREGLAR ESTA GUASADA
 	//lo agregue porque al levantar el arbol misteriosamente no toma la ultima palabra. APCSC.
-	nod.setPalabra("zzzzzzzzzzzzzzzzzzzzzzzzz");
+	nod.setPalabra("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
 	Posiciones* pos = new parser::Posiciones();
 	pos->agregarPosicion(1);
 	nod.setDocumentos(pos);
@@ -109,10 +104,8 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta) {
 
 	//CIERRO TOOOODO
 	fclose(this->archivoDirectorios);
-	fclose(this->archivoPunteros);
 	fclose(this->archivoLexicoFC);
 	fclose(this->tablaLexicoFC);
-	fclose(this->archivoPosRelativas);
 
 }
 

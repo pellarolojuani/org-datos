@@ -40,10 +40,7 @@ private:
 	Parser* parser;
 	char* nombreDirectorio;
 	FILE* archivoDirectorios;
-
-	FILE* archivoPunteros;
-	FILE* archivoPosRelativas;
-	FILE* archivoGamma;
+	FILE* archivoComprimido;
 
 	FILE* archivoLexicoFC;
 	FILE* tablaLexicoFC;

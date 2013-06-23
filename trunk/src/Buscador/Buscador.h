@@ -23,19 +23,15 @@ class Buscador {
 public:
 	Buscador();
 
-	abb::Nodo buscarTermino(string term);
+
 	match::Match* buscarFrase(string frase);
-
-
-
 
 	virtual ~Buscador();
 private:
 	FILE* archivoLexico;
 	FILE* tablalexico;
-	FILE* archivoPunteros;
-	FILE* archivoPosiciones;
-	ArchivoComprimido archivoGamma;
+	ArchivoComprimido archivoComprimido;
+	abb::Nodo buscarTermino(string term);
 	string* parsearLinea(char* line);
 	string toString(char c);
 	bool poseeDocumento(abb::Nodo nodo, int documento);
@@ -45,8 +41,6 @@ private:
 	int getPosPalabraEnVectorPosiciones(abb::Nodo n1, int doc, int* frecuenciaADevolver);
 	std::set<int>* getPosiciones(abb::Nodo n, int doc);
 	std::set<string> armarSetParaBusquedaFrases(abb::Nodo* nodosEncontrados, int cant, int doc);
-	abb::Nodo buscarTermino2(string term);
-
 	abb::ArbolB<abb::Nodo, ORDEN_NODO>* arbolB;
 
 	void levantarArbol();
