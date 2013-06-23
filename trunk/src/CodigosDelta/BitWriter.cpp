@@ -18,6 +18,9 @@ BitWriter::~BitWriter() {
 
 void BitWriter::crearBuffer(int size) {
 	this->cadena = new char[size];
+	for (int i= 0; i<size; i++){
+		cadena[i] = 0;
+	}
 	this->mask = 1;
 	this->posicion = 0;
 }
