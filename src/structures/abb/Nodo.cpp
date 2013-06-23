@@ -109,7 +109,7 @@ void Nodo::deserializarPosiciones(std::vector<unsigned int> data) {
 
 	int itPosiciones=comienzoPosiciones;
 	int sumaDocAnterior=0;
-	for( int i=1; i<cantParesDocFrec; i+=2 ){
+	for( int i=1; i<cantParesDocFrec * 2; i+=2 ){
 		int doc = data.at(i+1);
 		this->documentos->agregarPosicion(doc+sumaDocAnterior);
 		int frec = data.at(i);
