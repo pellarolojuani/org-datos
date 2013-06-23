@@ -12,10 +12,10 @@
 #include <vector>
 #include "CodigoGamma.h"
 
-class ArchivoGamma {
+class ArchivoComprimido {
 public:
-	ArchivoGamma();
-	virtual ~ArchivoGamma();
+	ArchivoComprimido();
+	virtual ~ArchivoComprimido();
 	void abrir();
 	void cerrar();
 	/**

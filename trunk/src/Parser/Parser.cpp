@@ -119,9 +119,7 @@ bool Parser::esDelimitador(char c, string* delimitadores){
 			return false ;
 
 		} else {
-			//indexo la barra
 			if( (c > 47) && (c <= 57)){
-				//es un numero
 				return false ;
 			}
 		}

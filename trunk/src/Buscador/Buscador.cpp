@@ -59,17 +59,6 @@ match::Match* Buscador::buscarFrase(string frase){
 		return match;
 	}
 
-	cout<<"Posiciones: ";
-	for(int j=0; j<nodosEncontrados[0].getPosiciones()->getCantPosiciones();j++){
-		cout<<nodosEncontrados[0].getPosiciones()->getPosiciones()[j]<<"   ";
-	}
-	cout<<endl;
-	cout<<"Documentos: ";
-	for(int h=0; h<nodosEncontrados[0].getDocumentos()->getCantPosiciones();h++){
-		cout<<nodosEncontrados[0].getDocumentos()->getPosiciones()[h]<<"   ";
-	}
-	cout<<endl;
-
 	abb::Nodo menor = nodosEncontrados[0];
 	//Agarro el que tiene menor cantidad de documentos:
 	for (int i=0; i <posiciones.getCantPosiciones(); i++){
@@ -130,7 +119,6 @@ std::set<string> Buscador::armarSetParaBusquedaFrases(abb::Nodo* nodosEncontrado
 			ss<<nodosEncontrados[i].getPalabra()<<"-"<<documentoBuscado<<"-"<<*it;
 			ss>>cadena;
 			set.insert(cadena);
-			cout<<cadena<<endl;
 		}
 	}
 	return set;
@@ -278,7 +266,6 @@ abb::Nodo Buscador::buscarTermino2(string term){
 		tokens = parsearLinea("0,0,0,0");
 		fseek(this->tablalexico, 0,SEEK_SET);
 	}
-	cout<<term<<"offset: "<<tokens[2]<<endl;
 	std::vector<unsigned int> punteros = archivoGamma.levantarVector(atoi(tokens[2].c_str()));
 	nodob.deserializarPosiciones(punteros);
 	return nodob;
@@ -473,7 +460,6 @@ void Buscador::levantarArbol(){
 
 		//LE PONGO TODAS LAS PROPIEDADES
 		nuevoNodo.setPalabra(strPalabra);
-		cout<<strPalabra<<endl;
 
 		//agregando chanchadas al tp.
 		//Si es la primer palabra (dado que no consideramos la linea (0,0,0,0), le ponemos un offset de -1
