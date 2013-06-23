@@ -114,7 +114,6 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta) {
 	fclose(this->archivoLexicoFC);
 	fclose(this->tablaLexicoFC);
 	fclose(this->archivoPosRelativas);
-	fclose(this->archivoGamma);
 
 }
 

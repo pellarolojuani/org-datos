@@ -93,7 +93,7 @@ std::vector<unsigned int> Nodo::serializarPosiciones() {
 void Nodo::deserializarPosiciones(std::vector<unsigned int> data) {
 	//Acá con el primer valor se cuantos pares hay (documento; frecuencia)
 	//a ese número lo multiplico por 2 y me dice dónde están las posiciones
-
+	unsigned int* deeta = data.data();
 	std::cout<<"Elementos del vector a deserializar: "<<std::endl;
 	for(int i=0; i<data.size(); i++){
 		std::cout<<data.at(i)<<"   ";

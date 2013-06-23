@@ -279,7 +279,7 @@ abb::Nodo Buscador::buscarTermino2(string term){
 		fseek(this->tablalexico, 0,SEEK_SET);
 	}
 	cout<<term<<"offset: "<<tokens[2]<<endl;
-	std::vector<unsigned int> punteros = archivoGamma.levantarVector(6);
+	std::vector<unsigned int> punteros = archivoGamma.levantarVector(atoi(tokens[2].c_str()));
 	nodob.deserializarPosiciones(punteros);
 	return nodob;
 
