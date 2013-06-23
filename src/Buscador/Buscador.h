@@ -35,7 +35,7 @@ private:
 	FILE* tablalexico;
 	FILE* archivoPunteros;
 	FILE* archivoPosiciones;
-	ArchivoGamma archivoGamma;
+	ArchivoComprimido archivoGamma;
 	string* parsearLinea(char* line);
 	string toString(char c);
 	bool poseeDocumento(abb::Nodo nodo, int documento);

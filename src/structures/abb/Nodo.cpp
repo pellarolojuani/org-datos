@@ -81,24 +81,12 @@ std::vector<unsigned int> Nodo::serializarPosiciones() {
 	//PRE: asumo que frecuencia me da el tamaño de la lista documentos y de posiciones
 	std::vector<unsigned int> result;
 	agregarDistancias(result, this->documentos, this->posiciones);
-	std::cout<<"Nodo - Elementos del vector a serializar: "<<std::endl;
-	for(int i=0; i<result.size(); i++){
-		std::cout<<result.at(i)<<"   ";
-
-	}
-	std::cout<<std::endl;
 	return result;
 }
 
 void Nodo::deserializarPosiciones(std::vector<unsigned int> data) {
 	//Acá con el primer valor se cuantos pares hay (documento; frecuencia)
 	//a ese número lo multiplico por 2 y me dice dónde están las posiciones
-	std::cout<<"Elementos del vector a deserializar: "<<std::endl;
-	for(unsigned int i=0; i<data.size(); i++){
-		std::cout<<data.at(i)<<"   ";
-
-	}
-	std::cout<<std::endl;
 
 	int cantParesDocFrec = data.at(0);
 	int comienzoPosiciones = cantParesDocFrec*2 +1 ;

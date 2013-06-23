@@ -5,33 +5,33 @@
  *      Author: matias
  */
 
-#include "ArchivoGamma.h"
+#include "ArchivoComprimido.h"
 #include <iostream>
 #include "../NombresArchivos.h"
 
 
-ArchivoGamma::ArchivoGamma() {
+ArchivoComprimido::ArchivoComprimido() {
 	this->abrir();
 }
 
-ArchivoGamma::~ArchivoGamma() {
+ArchivoComprimido::~ArchivoComprimido() {
 	this->cerrar();
 }
 
-void ArchivoGamma::abrir() {
+void ArchivoComprimido::abrir() {
 	this->file.open(constantes::NombresArchivos::archivoGamma, std::fstream::in | std::fstream::out | std::fstream::binary);
 }
 
-void ArchivoGamma::cerrar() {
+void ArchivoComprimido::cerrar() {
 	if (file.is_open())
 			file.close();
 }
 
-void ArchivoGamma::setPosicion(long posicion){
+void ArchivoComprimido::setPosicion(long posicion){
 	file.seekp(posicion);
 }
 
-int ArchivoGamma::guardarVector(std::vector<unsigned int> vector) {
+int ArchivoComprimido::guardarVector(std::vector<unsigned int> vector) {
 	char* destino;
 	int posPrincipio = file.tellp();
 	//Le agrego el tamaño al principio de todo
@@ -45,7 +45,7 @@ int ArchivoGamma::guardarVector(std::vector<unsigned int> vector) {
 	return posPrincipio;
 }
 
-std::vector<unsigned int> ArchivoGamma::levantarVector(int posicion) {
+std::vector<unsigned int> ArchivoComprimido::levantarVector(int posicion) {
 	file.clear();
 	std::vector<unsigned int> result;
 	this->setPosicion(posicion);

@@ -27,7 +27,7 @@ Axiomas: 1 - Todas sus hojas estan en el mismo nivel.
 #include "../../FrontCoding/Frontcoding.h"
 #include "../../PersistorPunteros/PersistorPunteros.h"
 #include "../../Parser/Posiciones.h"
-#include "../../CodigosDelta/ArchivoGamma.h"
+#include "../../CodigosDelta/ArchivoComprimido.h"
 
 using namespace std;
 
@@ -126,14 +126,9 @@ class ArbolB{
 		borrarRec(raiz);
 	};
 
-
-
-
-
-    //FUNCION TOTALMENTE DESUBICADA ACA
     void guardarLexicoYPunteros(frontcoding::Frontcoding FC){
-    	ArchivoGamma gammaFile;
-    	guardarLexicoRe(this->raiz, &FC, &gammaFile);
+    	ArchivoComprimido archivoComprimido;
+    	guardarLexicoRe(this->raiz, &FC, &archivoComprimido);
     }
 
 
@@ -171,7 +166,7 @@ class ArbolB{
 //			delete actual;
 		}
 
-        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC, ArchivoGamma *gammaFile)
+        void guardarLexicoRe(B_nodo<T,orden>* actual, frontcoding::Frontcoding *FC, ArchivoComprimido *archivoComprimido)
 		{
 			int i;
 			if (actual){
@@ -179,25 +174,14 @@ class ArbolB{
 				for (i=0; i<actual->entradasOcupadas; i++)
 				{
 					//Guardo lexico
-
-					guardarLexicoRe(actual->ramas[i], FC, gammaFile);
+					guardarLexicoRe(actual->ramas[i], FC, archivoComprimido);
 					string palabrastr = (string) (actual->data[i].getPalabra());
 					//Serializo en el archivo.
 					vector<unsigned int> posiciones = actual->data[i].serializarPosiciones();
-					cout<<"Posiciones a serializar:  "<<endl;
-					for(int i=0; i<posiciones.size();i++){
-						cout<<posiciones.at(i)<<"     ";
-					}
-					cout<<endl;
-
-					int offset = gammaFile->guardarVector(posiciones);
-					cout<<palabrastr<<"  offset: "<<offset<<endl;
+					int offset = archivoComprimido->guardarVector(posiciones);
 					FC->agregarPalabra(palabrastr, offset);
-
-
-
 				}
-				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC, gammaFile);
+				guardarLexicoRe(actual->ramas[actual->entradasOcupadas], FC, archivoComprimido);
 			}
 		}
 

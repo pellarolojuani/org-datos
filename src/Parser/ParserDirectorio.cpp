@@ -10,7 +10,6 @@
 #include "../structures/abb/Nodo.h"
 #include "../FrontCoding/Frontcoding.h"
 #include "../NombresArchivos.h"
-#include "../CodigosDelta/ArchivoGamma.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -82,7 +81,7 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta) {
 
 					//TODO variable a codificar en gamma (sería el archivo donde aparece)
 					cout << "Indexando directorio.." << nombreDirectorio
-							<< offset << endl;
+							<< endl;
 
 					parseFile(dirAct, contadorDir);
 					offset += strlen(nombreDirectorio) + 1;
@@ -99,7 +98,7 @@ void ParserDirectorio::parsearDirectorioRec(char* directorioRuta) {
 	abb::Nodo nod;
 	//TODO ARREGLAR ESTA GUASADA
 	//lo agregue porque al levantar el arbol misteriosamente no toma la ultima palabra. APCSC.
-	nod.setPalabra("zzzzzzzzzzzzzzzzzzzzzzz");
+	nod.setPalabra("zzzzzzzzzzzzzzzzzzzzzzzzz");
 	Posiciones* pos = new parser::Posiciones();
 	pos->agregarPosicion(1);
 	nod.setDocumentos(pos);
