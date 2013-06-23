@@ -46,16 +46,6 @@ int ArchivoGamma::guardarVector(std::vector<unsigned int> vector) {
 }
 
 std::vector<unsigned int> ArchivoGamma::levantarVector(int posicion) {
-	file.rdstate();
-	if(file.badbit){
-		std::cout << "Esta cagau BadBit" << std::endl;
-	}
-	if(file.eofbit){
-		std::cout << "Esta cagau EofBit" << std::endl;
-	}
-	if(file.failbit){
-		std::cout << "Esta cagau FailBit" << std::endl;
-	}
 	file.clear();
 	std::vector<unsigned int> result;
 	this->setPosicion(posicion);

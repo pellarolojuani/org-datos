@@ -192,14 +192,6 @@ class ArbolB{
 
 					int offset = gammaFile->guardarVector(posiciones);
 					cout<<palabrastr<<"  offset: "<<offset<<endl;
-
-					cout<<"Levanto el archivo de gammaFile para ver si es el mismo vector"<<endl;
-					vector<unsigned int> vecto = gammaFile->levantarVector(offset);
-					for(int i=0; i<vecto.size();i++){
-						cout<<vecto.at(i)<<"   ";
-					}
-					cout<<endl;
-					cout<<palabrastr<<"  offset: "<<offset<<endl;
 					FC->agregarPalabra(palabrastr, offset);
 
 

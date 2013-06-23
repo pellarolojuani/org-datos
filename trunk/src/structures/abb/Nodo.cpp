@@ -81,7 +81,7 @@ std::vector<unsigned int> Nodo::serializarPosiciones() {
 	//PRE: asumo que frecuencia me da el tamaño de la lista documentos y de posiciones
 	std::vector<unsigned int> result;
 	agregarDistancias(result, this->documentos, this->posiciones);
-	std::cout<<"Elementos del vector a serializar: "<<std::endl;
+	std::cout<<"Nodo - Elementos del vector a serializar: "<<std::endl;
 	for(int i=0; i<result.size(); i++){
 		std::cout<<result.at(i)<<"   ";
 
@@ -93,33 +93,31 @@ std::vector<unsigned int> Nodo::serializarPosiciones() {
 void Nodo::deserializarPosiciones(std::vector<unsigned int> data) {
 	//Acá con el primer valor se cuantos pares hay (documento; frecuencia)
 	//a ese número lo multiplico por 2 y me dice dónde están las posiciones
-	unsigned int* deeta = data.data();
 	std::cout<<"Elementos del vector a deserializar: "<<std::endl;
-	for(int i=0; i<data.size(); i++){
+	for(unsigned int i=0; i<data.size(); i++){
 		std::cout<<data.at(i)<<"   ";
 
 	}
 	std::cout<<std::endl;
 
 	int cantParesDocFrec = data.at(0);
-	int comienzoPosiciones = cantParesDocFrec*2+1;
+	int comienzoPosiciones = cantParesDocFrec*2 +1 ;
 	this->documentos = new Posiciones();
 	this->frecuencias = new Posiciones();
 	this->posiciones = new Posiciones();
 
-	int itPosiciones=comienzoPosiciones;
 	int sumaDocAnterior=0;
 	for( int i=1; i<cantParesDocFrec * 2; i+=2 ){
 		int doc = data.at(i+1);
-		this->documentos->agregarPosicion(doc+sumaDocAnterior);
+		this->documentos->agregarPosicion(doc);
 		int frec = data.at(i);
 		this->frecuencias->agregarPosicion(frec);
 		int sumaPosAnterior=0;
-		while(itPosiciones<frec){
+		for(int i = 0; i <frec; i++){
 			//Voy agregando posiciones
-			this->posiciones->agregarPosicion(data.at(itPosiciones)+sumaPosAnterior);
-			itPosiciones++;
-			sumaPosAnterior+=data.at(itPosiciones);
+			this->posiciones->agregarPosicion(data.at(comienzoPosiciones)+sumaPosAnterior);
+			sumaPosAnterior+=data.at(comienzoPosiciones);
+			comienzoPosiciones++;
 		}
 		sumaDocAnterior+=doc;
 
@@ -176,7 +174,7 @@ void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos
 	int i = 0;
 	int docActual=0;
 	int docsDistintos = 0;
-	int docAnterior = 0;
+//	int docAnterior = 0;
 	std::vector<unsigned int> frecuenciasParciales;
 
 	if (cantidad > 0){
@@ -204,24 +202,18 @@ void agregarDistancias(std::vector<unsigned int>& vector, Posiciones* documentos
 
 				contador++;
 				i++;
-				docAnterior = docActual;
+//				docAnterior = docActual;
 
 			}
 
-			int distanciaDocumento;
-			if(docActual==docAnterior){
-				distanciaDocumento = docActual;
-			} else
-				distanciaDocumento = docActual-docAnterior;
-
 			vector.push_back(contador);
-			vector.push_back(distanciaDocumento);
-			docAnterior = docActual;
+			vector.push_back(docActual);
+//			docAnterior = docActual;
 			docActual = posiciones[i];
 		}
 	}
 	//Finalmente agrego todas las frecuencias
-	for(int i=0; i<frecuenciasParciales.size();i++){
+	for(unsigned int i=0; i<frecuenciasParciales.size();i++){
 		vector.push_back(frecuenciasParciales.at(i));
 
 	}
