@@ -28,9 +28,7 @@ namespace buscador {
 Buscador::Buscador() {
 	this->archivoLexico = fopen(constantes::NombresArchivos::archivoLexico,"rb");
 	this->tablalexico = fopen(constantes::NombresArchivos::archivoTablaLexico,"rb");
-	this->archivoPunteros = fopen(constantes::NombresArchivos::archivoPunteros,"rb");
-	this->archivoPosiciones = fopen(constantes::NombresArchivos::archivoPosicionesRelativas,"rb");
-	archivoGamma.abrir();
+	archivoComprimido.abrir();
 	this->arbolB = new abb::ArbolB<abb::Nodo, ORDEN_NODO>();
 	this->levantarArbol();
 
@@ -138,7 +136,7 @@ bool Buscador::asignarPosicionesAPalabras(abb::Nodo* nodosEncontrados, string* p
 			return false;
 		} else {
 			abb::Nodo n;
-			n=buscarTermino2(palabras[i]);
+			n=buscarTermino(palabras[i]);
 			nodosEncontrados[i] = n;
 		}
 	}
@@ -249,7 +247,7 @@ bool Buscador::poseeDocumento(abb::Nodo nodo, int documento){
 }
 
 //PRE: ya no se comprueba que el termino este en la coleccion, so, el termino DEBE estar en la coleccion si se llama a esta funcion.
-abb::Nodo Buscador::buscarTermino2(string term){
+abb::Nodo Buscador::buscarTermino(string term){
 	abb::Nodo nodob;
 	nodob.setPalabra(term);
 	nodob = arbolB->buscarYdevolver(nodob);
@@ -266,119 +264,10 @@ abb::Nodo Buscador::buscarTermino2(string term){
 		tokens = parsearLinea("0,0,0,0");
 		fseek(this->tablalexico, 0,SEEK_SET);
 	}
-	std::vector<unsigned int> punteros = archivoGamma.levantarVector(atoi(tokens[2].c_str()));
+	std::vector<unsigned int> punteros = archivoComprimido.levantarVector(atoi(tokens[2].c_str()));
 	nodob.deserializarPosiciones(punteros);
 	return nodob;
 
-}
-
-//-------------- A BORRAR CUANDO TODO SALGA BIEN ----------------
-abb::Nodo Buscador::buscarTermino(string term){
-
-	abb::Nodo nodob;;
-	nodob.setPalabra(term);
-
-	if(arbolB->buscar(nodob)){
-		nodob = arbolB->buscarYdevolver(nodob);
-		Posiciones* documentos = new Posiciones();
-		Posiciones* posiciones = new Posiciones();
-		Posiciones* frecuencias = new Posiciones();
-
-
-		string* tokens;
-		//SI EL OFFSET ME DA -1 ES PORQUE SE TRATA DE LA PRIMER PALABRA, Y COMO ESA LINEA NO LA
-		//ESCRIBO EN LA TABLA, se lo tengo que avisar al seeker.
-		int offset = nodob.getLineaTabla();
-		if(offset != -1){
-			char line[LONG_MAX_LINEA];
-			fseek(this->tablalexico, nodob.getLineaTabla(),SEEK_SET);
-			fgets(line,LONG_MAX_LINEA, this->tablalexico);
-			tokens = parsearLinea(line);
-		} else {
-			tokens = parsearLinea("0,0,0,0");
-			fseek(this->tablalexico, 0,SEEK_SET);
-		}
-
-		//La siguiente linea la uso para obtener el total de documentos.
-		int longitud;
-		char siguienteLinea[LONG_MAX_LINEA];
-		if (!(fgets(siguienteLinea,LONG_MAX_LINEA, this->tablalexico)) == NULL){
-			string* siguientesTok = parsearLinea(siguienteLinea);
-			longitud = atoi(siguientesTok[2].c_str()) - atoi(tokens[2].c_str());
-		} else {
-			longitud = 999999999;
-		}
-
-		//ME POSICIONO EN LOS ARCHIVOS DE PUNTEROS Y POSICIONES.
-		fseek(this->archivoPunteros, atoi(tokens[2].c_str()), SEEK_SET);
-		fseek(this->archivoPosiciones, atoi(tokens[3].c_str()), SEEK_SET);
-
-		//LONGITUD: es la cantidad de caracteres que tienen los documentos.
-		//Ahora es asi: documento1,frecuencia1,documento2,frecuencia2,..
-		int i = 0;
-		int docAnt=0;
-		int sumaPosAnt=0;
-		char c;
-
-		while ((i<longitud)&&(c!=EOF)) {
-			int doc;
-			c = fgetc(this->archivoPunteros);
-			i++;
-
-			string strDoc;
-			while((c!= ',')&&(i<longitud)){
-				strDoc.append(toString(c));
-				c = fgetc(this->archivoPunteros);
-				i++;
-			}
-
-
-			doc = atoi(strDoc.c_str());
-			documentos->agregarPosicion(doc+docAnt);
-			docAnt+=doc;
-
-			//AHORA NECESITO LA FRECUENCIA PARA SABER CUANTAS POSICIONES TENGO QUE PARSEAR.
-			c = fgetc(this->archivoPunteros);
-			i++;
-			int frec;
-			string strFrec;
-			while((c!= ',')&&(i<longitud)){
-				strFrec.append(toString(c));
-				c = fgetc(this->archivoPunteros);
-				i++;
-			}
-
-
-			//GUARDO LA FRECUENCIA SIGUIENTE AL NRO DE OFFSET DE DOCUMENTO
-			frec = atoi(strFrec.c_str());
-			frecuencias->agregarPosicion(frec);
-
-			//Frec me dice la cantidad de posiciones que tengo que parsear del archivo de posiciones para el documento doc.
-			int j = 0;
-			sumaPosAnt = 0;
-			while ((j<frec)){
-				//PARSEO CADA POSICION
-				char c2 = fgetc(this->archivoPosiciones);
-				string strPos;
-				while(c2!= ','){
-					strPos.append(toString(c2));
-					c2 = fgetc(this->archivoPosiciones);
-				}
-				int pos = atoi(strPos.c_str());
-				posiciones->agregarPosicion(pos+sumaPosAnt);
-				sumaPosAnt=pos+sumaPosAnt;
-				j++;
-			}
-
-		}
-		nodob.setFrecuencias(frecuencias);
-		nodob.setPosiciones(posiciones);
-		nodob.setDocumentos(documentos);
-	} else {
-		nodob.setEncontrado(false);
-		return nodob;
-	}
-	return nodob;
 }
 
 string Buscador::toString(char c){
@@ -490,7 +379,7 @@ void Buscador::levantarArbol(){
 
 
 Buscador::~Buscador() {
-	this->archivoGamma.cerrar();
+	this->archivoComprimido.cerrar();
 }
 
 } /* namespace buscador */
