@@ -46,11 +46,23 @@ int ArchivoGamma::guardarVector(std::vector<unsigned int> vector) {
 }
 
 std::vector<unsigned int> ArchivoGamma::levantarVector(int posicion) {
+	file.rdstate();
+	if(file.badbit){
+		std::cout << "Esta cagau BadBit" << std::endl;
+	}
+	if(file.eofbit){
+		std::cout << "Esta cagau EofBit" << std::endl;
+	}
+	if(file.failbit){
+		std::cout << "Esta cagau FailBit" << std::endl;
+	}
+	file.clear();
 	std::vector<unsigned int> result;
-
+	this->setPosicion(posicion);
 	//Armo un buff generoso para el primer número
 	char* buf = new char[8];
 	file.read(buf, 8);
+	file.clear();
 	//Leo el largo de la lista (y le agrego el 1er número, que representa el largo)
 	int size = gamma.decodificar(buf) + 1;
 	//Ahora leo todos los números
@@ -58,9 +70,10 @@ std::vector<unsigned int> ArchivoGamma::levantarVector(int posicion) {
 	delete[] buf;
 	buf = new char[size * 8];
 	file.read(buf, size * 8);
+	file.clear();
 	int* intArray = this->gamma.decodificar(buf, size);
 	//Y los agrego al vector
-	result = std::vector<unsigned int>(intArray + 1, intArray + size +1);
+	result = std::vector<unsigned int>(intArray + 1, intArray + size);
 	delete[] buf;
 	return result;
 }
