@@ -29,8 +29,10 @@ public:
 	void agregarMatch(int doc);
 	int getCantidadMatches();
 	void borrar();
+	string descifrarDoc(int doc);
 
 private:
+
 	string* documentos;
 	FILE* archivoDirectorios;
 	parser::Posiciones* offsetsDocumentos;
